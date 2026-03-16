@@ -1,0 +1,2282 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="vi" dir="ltr"  x-data="{ adminTheme: $persist('auto').as('adminTheme') }" x-bind:class="{'dark': adminTheme === 'dark' || (adminTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" x-cloak>
+    <head>
+        <title> 
+Chọn Import DRG để xem | DRG-VN
+</title>
+
+        <link href="/static/unfold/fonts/inter/styles.css" rel="stylesheet">
+        <link href="/static/unfold/fonts/material-symbols/styles.css" rel="stylesheet">
+
+        
+            <link href="/static/base/css/styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/btn-styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/loading.css" rel="stylesheet">
+        
+            <link href="/static/css/styles.css" rel="stylesheet">
+        
+
+        
+            <link rel="icon" href="/static/logo/logo.png" type="image/svg+xml" sizes="32x32">
+        
+
+        <link href="/static/unfold/css/styles.css" rel="stylesheet">
+        <link href="/static/unfold/css/simplebar/simplebar.css" rel="stylesheet">
+
+        <script src="/static/unfold/js/alpine/alpine.anchor.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.persist.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.sort.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.resize.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.js" defer></script>
+        <script src="/static/unfold/js/htmx/htmx.js"></script>
+        <script src="/static/unfold/js/chart/chart.js"></script>
+
+        
+            <script src="/static/base/js/loading.js"></script>
+        
+            <script src="/static/base/js/whiteneuron.js"></script>
+        
+
+        
+    
+
+    <script src="/jsi18n/"></script>
+
+    <link href="/static/admin/css/vendor/select2/select2.css" media="screen" rel="stylesheet">
+<link href="/static/admin/css/autocomplete.css" media="screen" rel="stylesheet">
+
+    
+
+
+        
+
+    
+    
+    <script src="/static/admin/js/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin/js/calendar.js"></script>
+<script src="/static/admin/js/vendor/select2/select2.full.js"></script>
+<script src="/static/unfold/filters/js/DateTimeShortcuts.js"></script>
+<script src="/static/admin/js/jquery.init.js"></script>
+<script src="/static/admin/js/core.js"></script>
+<script src="/static/unfold/js/select2.init.js"></script>
+<script src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script src="/static/admin/js/actions.js"></script>
+<script src="/static/admin/js/urlify.js"></script>
+<script src="/static/admin/js/prepopulate.js"></script>
+<script src="/static/admin/js/vendor/xregexp/xregexp.min.js"></script>
+
+    <style type="text/css">
+        .grid_view .action_buttoms {
+            z-index: 1000;
+            position: absolute;
+            right: 2px;
+            bottom: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href='/static/base/css/btn-styles.css'>
+    
+<script>
+    (function () {
+        const globalKey = "sidebarDesktopOpen";
+        const modelKey = "sidebarDesktopOpen_vietnamdrg_importdrgproxy";
+        // default theo ModelAdmin: True => '1', False => '0'
+        const defaultVal = '1';
+
+        // 1) MỖI LẦN load trang: luôn dùng default của model
+        let perModel = defaultVal;
+        localStorage.setItem(modelKey, perModel);
+        // ép luôn globalKey cho Unfold dùng
+        localStorage.setItem(globalKey, perModel);
+
+        // 2) Bọc localStorage.setItem để khi Unfold set globalKey, ta copy sang modelKey
+        const _setItem = localStorage.setItem.bind(localStorage);
+        localStorage.setItem = function (key, value) {
+            _setItem(key, value);
+            if (key === globalKey) {
+                _setItem(modelKey, value);
+            }
+        };
+
+        console.log("Sidebar override for vietnamdrg_importdrgproxy ->", perModel,
+                    "global:", localStorage.getItem(globalKey));
+    })();
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+
+
+        <script src="/static/unfold/js/app.js"></script>
+
+        
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+
+        
+            <meta name="robots" content="NONE,NOARCHIVE">
+        
+    </head>
+
+    <body class="antialiased bg-base-50 font-sans text-font-default-light text-sm dark:bg-base-900 dark:text-font-default-dark  app-vietnamdrg model-importdrgproxy change-list" data-admin-utc-offset="25200"
+          x-data="{
+                  activeTab: 'general',
+                  sidebarMobileOpen: false,
+                  sidebarDesktopOpen: (localStorage.getItem('sidebarDesktopOpen') !== null) ? (localStorage.getItem('sidebarDesktopOpen') == '1') : true
+                  }"
+          x-init="
+                  activeTab = getCurrentTab() || 'general';
+                  $watch('sidebarDesktopOpen', value => localStorage.setItem('sidebarDesktopOpen', value ? '1' : '0'));
+                 "
+    >
+        
+            <style id="unfold-theme-colors">
+                :root {
+                    
+                        --border-radius: 6px;
+                    
+
+                    
+                        
+                            --color-base-50: rgb(249, 250, 251);
+                        
+                            --color-base-100: rgb(243, 244, 246);
+                        
+                            --color-base-200: rgb(229, 231, 235);
+                        
+                            --color-base-300: rgb(209, 213, 219);
+                        
+                            --color-base-400: rgb(156, 163, 175);
+                        
+                            --color-base-500: rgb(107, 114, 128);
+                        
+                            --color-base-600: rgb(75, 85, 99);
+                        
+                            --color-base-700: rgb(55, 65, 81);
+                        
+                            --color-base-800: rgb(31, 41, 55);
+                        
+                            --color-base-900: rgb(17, 24, 39);
+                        
+                            --color-base-950: rgb(3, 7, 18);
+                        
+                    
+                        
+                            --color-primary-50: rgb(240, 249, 255);
+                        
+                            --color-primary-100: rgb(224, 242, 254);
+                        
+                            --color-primary-200: rgb(186, 230, 253);
+                        
+                            --color-primary-300: rgb(125, 211, 252);
+                        
+                            --color-primary-400: rgb(56, 189, 248);
+                        
+                            --color-primary-500: rgb(14, 165, 233);
+                        
+                            --color-primary-600: rgb(2, 132, 199);
+                        
+                            --color-primary-700: rgb(3, 105, 161);
+                        
+                            --color-primary-800: rgb(7, 89, 133);
+                        
+                            --color-primary-900: rgb(12, 74, 110);
+                        
+                            --color-primary-950: rgb(8, 47, 73);
+                        
+                    
+                        
+                            --color-font-subtle-light: rgb(107, 114, 128);
+                        
+                            --color-font-subtle-dark: rgb(156, 163, 175);
+                        
+                            --color-font-default-light: rgb(75, 85, 99);
+                        
+                            --color-font-default-dark: rgb(209, 213, 219);
+                        
+                            --color-font-important-light: rgb(17, 24, 39);
+                        
+                            --color-font-important-dark: rgb(243, 244, 246);
+                        
+                    
+                }
+            </style>
+        
+
+        
+    <!-- Overlay loading -->
+    <div id="loading-overlay" display="flex">
+        <img src="/static/base/images/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- toast -->
+    <div class="ui-toast ui-toast-top ui-toast-end z-50" id="toast-container">
+    </div>
+    
+    <div id="page" class="flex max-w-full min-h-screen ">
+        
+            
+                
+
+<div class="relative z-60">
+    <div class="fixed hidden xl:relative xl:block w-[288px] " x-bind:class="{'xl:hidden!': !sidebarDesktopOpen, 'block!': sidebarMobileOpen}">
+        <div class="bg-base-50 relative z-30 dark:bg-base-900">
+            <div id="nav-sidebar" class="bg-base-50 border-r border-base-200 bottom-0 fixed max-h-screen top-0 w-[288px] dark:border-base-800 dark:bg-base-900 ">
+                
+                    
+
+<nav id="nav-sidebar-inner" class="bg-base-50 flex flex-col min-h-screen dark:text-font-default-dark dark:bg-base-950/20 ">
+    
+
+<div class="border-b border-base-200 flex gap-3 items-center h-[65px] mb-6 dark:border-base-800 px-3 " x-data="{ openDropdown: false }">
+    <div class="bg-transparent flex font-semibold gap-3 grow min-w-0 h-[64px] items-center px-3 cursor-pointer transition-all -mx-3 px-6 hover:bg-base-100 dark:hover:bg-white/[.06]"
+         
+             x-on:click="openDropdown = !openDropdown"
+             x-bind:class="{'bg-base-100 dark:bg-white/[.06]': openDropdown, 'bg-transparent': !openDropdown}"
+         
+    >
+        
+            
+
+
+    <div class="shrink-0">
+        <span>
+        
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="h-[38px] hidden dark:block"/>
+
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="block h-[38px] dark:hidden" />
+        
+    </span>
+    </div>
+
+
+<div class="flex flex-col grow justify-center min-w-0">
+    <div class="text-important tracking-tight *:truncate xl:text-sm">
+        
+    <div id="site-name">
+    
+        DRG-VN
+    
+</div>
+
+
+    </div>
+
+    
+        <div class="font-normal text-subtle text-xs truncate">
+            Trang quản trị
+        </div>
+    
+</div>
+
+        
+
+        
+            <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+                unfold_more
+            </span>
+        
+    </div>
+
+    <span class="material-symbols-outlined block cursor-pointer h-[18px] xl:hidden! hover:text-base-700 dark:hover:text-base-200" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+        close
+    </span>
+
+    
+
+
+    <div class="absolute bg-white border border-base-200 flex flex-col left-3 py-1 rounded-default shadow-lg top-[73px] w-[264px] z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openDropdown" x-transition x-on:click.outside="openDropdown = false">
+        
+            <a href="https://whiteneuron.com/" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark" 
+>
+                
+                    <span class="material-symbols-outlined">
+                        diamond
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Công ty TNHH White Neuron
+                </span>
+            </a>
+        
+            <a href="/cdn-cgi/l/email-protection#15747b7d7b6155627d7c61707b7060677a7b3b767a78" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark">
+                
+                    <span class="material-symbols-outlined">
+                        rocket_launch
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Email: <span class="__cf_email__" data-cfemail="78191610160c380f10110c1d161d0d0a1716561b1715">[email&#160;protected]</span>
+                </span>
+            </a>
+        
+    </div>
+
+
+</div>
+
+
+    
+
+
+    
+        <div class="mb-2.5 mx-3 relative" x-data="searchDropdown()" x-on:keydown.window="applyShortcut($event)" x-on:click.outside="openSearchResults = false">
+            <div class="bg-white border border-base-200 flex flex-row items-center px-3 rounded-default relative shadow-xs w-full focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600 dark:bg-base-900 dark:border-base-700">
+                <span class="material-symbols-outlined md-18 text-base-400">manage_search</span>
+
+                <input type="search"
+                       id="nav-filter"
+                       name="s"
+                       x-ref="searchInput"
+                       x-on:focus="openSearchResults = true; currentIndex = 0"
+                       x-on:keydown="openSearchResults = true;"
+                       x-on:keydown.arrow-down.prevent="nextItem()"
+                       x-on:keydown.arrow-up.prevent="prevItem()"
+                       x-on:keydown.escape.prevent="openSearchResults = false; if ($refs.searchInput.value === '') { $refs.searchInput.blur() } else { $refs.searchInput.value = '' }"
+                       x-on:keydown.enter.prevent="selectItem()"
+                       x-on:search="currentIndex = 0"
+                       hx-get="/search/"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#search-results"
+                       class="grow font-medium min-w-0 overflow-hidden p-2 placeholder-font-subtle-light truncate focus:outline-hidden dark:bg-base-900 dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                       placeholder="Search apps and models..."
+                       aria-label="Filter navigation items">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    t
+</kbd>
+
+            </div>
+
+            <div id="search-results" x-show="openSearchResults"></div>
+        </div>
+    
+
+
+
+    
+        
+
+
+    <div id="nav-sidebar-apps" class="h-0 grow overflow-auto" data-simplebar>
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Công cụ
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/drgproxy/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                home
+                                            </span>
+                                        
+
+                                        <span>Phân loại DRG</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/importdrgproxy/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 bg-base-100 font-semibold text-primary-600 dark:bg-white/[.06] dark:text-primary-500 active">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                home
+                                            </span>
+                                        
+
+                                        <span>Import Excel DRG</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Điều hướng
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/base/app/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                dashboard
+                                            </span>
+                                        
+
+                                        <span>Bảng điều khiển</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notification/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notifications
+                                            </span>
+                                        
+
+                                        <span>Thông báo</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/feedbacks/feedbackdata/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                feedback
+                                            </span>
+                                        
+
+                                        <span>Phản hồi</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            DRG Thái Lan
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>DC (Nhóm chẩn đoán)</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>DRG</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_i10/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                medical_services
+                                            </span>
+                                        
+
+                                        <span>Dữ liệu ICD-10</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_ax/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                category
+                                            </span>
+                                        
+
+                                        <span>Nhóm giải phẫu</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_proc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                healing
+                                            </span>
+                                        
+
+                                        <span>Thủ thuật</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_prpdc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                alt_route
+                                            </span>
+                                        
+
+                                        <span>Ánh xạ Thủ thuật-PDC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_ccex/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                block
+                                            </span>
+                                        
+
+                                        <span>Loại trừ CC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_cclm/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                grid_on
+                                            </span>
+                                        
+
+                                        <span>Ma trận nhãn CC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            DRG Việt Nam
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/vndc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>VNDC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/vndrg/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>VNDRG</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Dữ liệu bệnh nhân
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/patient/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                person
+                                            </span>
+                                        
+
+                                        <span>Bệnh nhân</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Người dùng &amp; Nhóm
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/user/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                person
+                                            </span>
+                                        
+
+                                        <span>Người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/useractivity/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                history
+                                            </span>
+                                        
+
+                                        <span>Hoạt động người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            45
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/auth/group/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                group
+                                            </span>
+                                        
+
+                                        <span>Nhóm</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Hệ thống
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/image/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                image
+                                            </span>
+                                        
+
+                                        <span>Hình ảnh</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/mail/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                email
+                                            </span>
+                                        
+
+                                        <span>Email</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notificationconfig/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notification_important
+                                            </span>
+                                        
+
+                                        <span>Cấu hình thông báo</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+    </div>
+
+    
+
+
+    
+
+    <div class="border-t border-base-200 px-6 py-3 relative dark:border-base-800" x-data="{ openUserLinks: false }">
+    <nav class="absolute bg-white border border-base-200 flex flex-col leading-none py-1 rounded-default shadow-lg bottom-[73px] left-3 right-3 z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openUserLinks" x-transition x-on:click.outside="openUserLinks = false">
+        
+
+
+    <div class="border-b border-base-200 flex flex-row gap-1 mb-1 pb-1 px-2 dark:border-base-700">
+        <a class="cursor-pointer flex flex-row grow px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'light'"
+           x-bind:class="adminTheme == 'light'  && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">light_mode</span>
+            <span class="leading-none self-center">Light</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow leading-none -ml-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'dark'"
+           x-bind:class="adminTheme == 'dark' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">dark_mode</span>
+            <span class="leading-none self-center">Dark</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow -mr-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'auto'"
+           x-bind:class="adminTheme == 'auto' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">computer</span>
+            <span class="leading-none self-center">Hệ thống</span>
+        </a>
+    </div>
+
+
+
+        
+
+
+
+
+
+
+    
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="JN0FcwaCLkDmmkRjTWfqJv3aQsrbqCA9YaQ7vQ61fyrJeSpPqKtBkN9kmB5X1TvW">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="vi">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!">
+        
+
+        Tiếng Việt <span class="ml-auto uppercase font-semibold text-xs text-subtle">vi</span>
+    </button>
+</form>
+
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="JN0FcwaCLkDmmkRjTWfqJv3aQsrbqCA9YaQ7vQ61fyrJeSpPqKtBkN9kmB5X1TvW">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="en">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 ">
+        
+
+        English <span class="ml-auto uppercase font-semibold text-xs text-subtle">en</span>
+    </button>
+</form>
+
+        
+    
+
+    <div class="border-t border-base-200 mt-1 pt-1 dark:border-base-700"></div>
+
+
+
+        
+
+        
+
+<div x-data="{ openUserLinks: false }">
+    <div class="flex items-center justify-center">
+        <a class="flex items-center justify-center cursor-pointer h-8 w-8 hover:text-base-700 dark:hover:text-base-200" @click="openUserLinks = true">
+            
+                <span class="material-symbols-outlined">person</span>
+            
+        </a>
+    </div>
+
+    <!-- Dialog Overlay -->
+    <div 
+        x-show="openUserLinks"
+        x-cloak
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        @click.self="openUserLinks = false"
+        @keydown.escape.window="openUserLinks = false"
+    >
+        <!-- Dialog Content -->
+        <div 
+            x-show="openUserLinks"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-white dark:bg-base-800 rounded-lg shadow-xl w-full max-w-sm border border-base-200 dark:border-base-700"
+        >
+            <!-- Header -->
+            <div class="border-b border-base-200 dark:border-base-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    
+                        <span class="material-symbols-outlined text-4xl">person</span>
+                    
+                    <span class="font-medium text-base-900 dark:text-base-100">
+                        admin
+                    </span>
+                </div>
+                <button 
+                    @click="openUserLinks = false"
+                    class="text-base-500 hover:text-base-700 dark:text-base-400 dark:hover:text-base-200"
+                >
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="flex flex-col py-2">
+                
+                <a 
+                    href="/base/userprofile/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    Hồ sơ người dùng
+                </a>
+                
+                
+                
+                <a 
+                    href="/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                    Xem trang
+                </a>
+                
+
+                
+                    
+                        <a 
+                            href="/password_change/" 
+                            class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                            @click="openUserLinks = false"
+                        >
+                            <span class="material-symbols-outlined text-lg">lock</span>
+                            Đổi mật khẩu
+                        </a>
+                    
+                
+
+                <!-- Logout -->
+                <div class="border-t border-base-200 dark:border-base-700 mt-2 pt-2">
+                    <form id="logout-form" method="post" action="/logout/" class="mx-2">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="JN0FcwaCLkDmmkRjTWfqJv3aQsrbqCA9YaQ7vQ61fyrJeSpPqKtBkN9kmB5X1TvW">
+                        <button 
+                            type="submit" 
+                            class="bg-none block cursor-pointer px-3 py-2 text-left text-red-500 rounded-default w-full hover:bg-red-100 dark:hover:bg-red-500/20 dark:hover:text-red-500 flex items-center gap-2"
+                            onclick="document.cookie='skip_auto_guest=1; path=/; max-age=31536000';"
+                        >
+                            <span class="material-symbols-outlined text-lg">logout</span>
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+    </nav>
+
+    <div class="cursor-pointer flex flex-row gap-3 items-center min-h-[64px] -mx-6 -my-3 px-6 py-3 hover:bg-base-100 dark:hover:bg-base-800" x-on:click="openUserLinks = !openUserLinks" x-bind:class="{'bg-base-100 dark:bg-base-800': openUserLinks}">
+        
+            <div class="bg-white bg-cover h-[38px] flex items-center justify-center rounded-default select-none shadow min-w-[38px] w-[38px] dark:bg-base-700">
+                <span class="material-symbols-outlined text-base-400">person</span>
+            </div>
+        
+        <div class="flex flex-col select-none min-w-0">
+            <div class="font-semibold text-important tracking-tight truncate">
+                admin
+            </div>
+
+            
+                <div class="font-normal text-subtle text-xs truncate">
+                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d7b9a3b6b9bfa3ba97b0bab6bebbf9b4b8ba">[email&#160;protected]</a>
+                </div>
+            
+        </div>
+
+        <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+            unfold_more
+        </span>
+    </div>
+</div>
+</nav>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+        
+
+        <div id="main" class="bg-white flex flex-col grow min-w-0 dark:bg-base-900 ">
+            
+
+
+    <div class="bg-white border-b border-base-200 mb-6 px-4 z-40 dark:bg-base-900 dark:border-base-800 dark:text-font-default-dark ">
+        <div class=" flex items-center h-16 mx-auto py-4">
+            <div id="header-inner" class="flex items-center relative w-full">
+                <div class="flex items-center w-full">
+                    
+                        
+                            
+                                
+
+<div class="flex flex-row grow font-semibold items-center min-w-0 mr-3">
+    
+        <span class="cursor-pointer flex flex-row items-center">
+            <span class="material-symbols-outlined hidden! xl:block!" x-on:click="sidebarDesktopOpen = !sidebarDesktopOpen; localStorage.setItem('sidebarDesktopOpen', sidebarDesktopOpen ? '1' : '0');">
+                dock_to_right
+            </span>
+
+            <span class="material-symbols-outlined block! xl:hidden!" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+                dock_to_right
+            </span>
+        </span>
+
+        <span class="block bg-base-200 h-5 mx-3 w-px dark:bg-base-700"></span>
+    
+
+    
+
+
+    
+
+
+
+    <h1 class="overflow-hidden leading-5 text-ellipsis text-font-important-light whitespace-nowrap xl:text-base dark:text-font-important-dark">
+        <a href="/vietnamdrg/" class="align-middle inline-block leading-5 tracking-tight">
+        DRG Việt Nam
+        </a ><span class="material-symbols-outlined inline-block align-middle leading-5 mx-2 text-base-400 dark:text-base-500">chevron_right</span><a href="/vietnamdrg/importdrgproxy/" class="align-middle inline-block leading-5 tracking-tight">
+        Import DRGs
+        </a >
+
+
+        
+    </h1>
+</div>
+
+                            
+
+                            
+                                
+
+<div class="flex flex-row gap-4 items-center ml-auto">
+    
+        <span class="inline-block font-semibold h-6 leading-6 px-2 rounded-default text-[11px] uppercase whitespace-nowrap
+             
+                 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400
+             "  title="Chọn Import DRG để xem">
+    Vận hành (Production)
+</span>
+
+    
+
+    
+
+
+
+
+    
+        
+    
+        
+            
+    
+
+
+        
+    
+
+    
+</div>
+
+                            
+                        
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+            
+                <div class="px-4">
+                    <div class=" mx-auto">
+                        
+
+                    </div>
+                </div>
+            
+
+            <div class="@container px-4 pb-4 grow">
+                <div id="content" class=" mx-auto ">
+                    
+                        
+
+                    
+
+                    
+<div id="content-main" class="bg-gray-100 dark:bg-gray-900 min-h-screen font-sans p-6">
+    <!-- Header -->
+    <header class="bg-gray-100 dark:bg-gray-800 shadow rounded-lg p-6 mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold tracking-tight text-red-100 dark:text-white">Chọn Import DRG để xem
+            </h1>
+            <p class="text-sm  dark:text-gray-400 mt-1">Check logic and verify DRG results from Excel</p>
+        </div>
+        <div class="flex space-x-3">
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="bg-gray-100 dark:bg-gray-800 shadow rounded-lg p-6">
+
+        <!-- Step 1: Upload -->
+        <div id="step-upload" class="mb-8">
+            <div class="max-w-xl mx-auto text-center border-2 border-dashed border-gray-300 rounded-lg p-10 hover:border-blue-500 transition-colors cursor-pointer"
+                onclick="document.getElementById('file-upload').click()">
+                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48"
+                    aria-hidden="true">
+                    <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">
+                    <span class="font-medium text-blue-600 hover:text-blue-500">Upload a file</span> or drag and drop
+                </p>
+                <p class="mt-1 text-xs ">Excel files (XLSX, XLS)</p>
+                <input id="file-upload" type="file" class="hidden" accept=".xlsx, .xls"
+                    onchange="handleFileUpload(this)">
+            </div>
+        </div>
+
+        <!-- Step 2: Preview & Controls -->
+        <div id="step-preview" class="hidden">
+            <div class="flex justify-between items-center mb-4">
+                <div class="flex items-center space-x-4">
+                    <div
+                        class="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-blue-900 dark:text-blue-300">
+                        Total: <span id="total-count">0</span>
+                    </div>
+                    <!-- Test Results Summary -->
+                    <div id="test-summary" class="hidden flex space-x-2">
+                        <div
+                            class="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-green-900 dark:text-green-300">
+                            Pass: <span id="pass-count">0</span>
+                        </div>
+                        <div
+                            class="bg-red-100 text-red-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-red-900 dark:text-red-300">
+                            Fail: <span id="fail-count">0</span>
+                        </div>
+                        <div
+                            class="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full dark:bg-yellow-900 dark:text-yellow-300">
+                            Error: <span id="error-count">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-3 items-center">
+                    <button onclick="exportResults()"
+                        class="px-5 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Export Excel
+                    </button>
+                    <button onclick="saveToDatabase()"
+                        class="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+                        </svg>
+                        Save to Database
+                    </button>
+                    <button onclick="runTests()"
+                        class="px-5 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-sm transition">
+                        Run Test Suite
+                    </button>
+                    <button onclick="resetAll()"
+                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition">
+                        Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progress-container" class="hidden w-full bg-gray-200 rounded-full h-2.5 mb-4 dark:bg-gray-700">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
+                    style="width: 0%"></div>
+            </div>
+
+            <!-- Results Table -->
+            <div class="overflow-x-auto table-container border border-gray-200 rounded-lg max-h-[600px]">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700 sticky top-0 z-10">
+                        <tr>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Stat</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Case ID</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Gender</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Age</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                LOS</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Wt</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                PDx</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                SDx</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Proc</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Expected</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Logic Note</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Actual</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Status</th>
+                            <th scope="col"
+                                class="px-4 py-3 text-left text-xs font-medium  uppercase tracking-wider dark:text-gray-300">
+                                Sys Note</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"
+                        class="bg-gray-100 divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <!-- Rows injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    let excelData = [];
+    const BATCH_SIZE = 10;
+
+    function handleFileUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, { type: 'array' });
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert to JSON
+            const rawData = XLSX.utils.sheet_to_json(worksheet, { raw: false }); // raw: false to read dates/numbers as strings if needed
+
+            // Process and Validate Data
+            processData(rawData);
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function processData(data) {
+        excelData = data.map((row, index) => {
+            // Map Excel columns to our format
+            return {
+                _id: index, // internal ID
+                CaseID: row['CaseID'] || row['Case ID'] || `ROW_${index + 1}`,
+                Gender: parseGender(row['Gender']), // 1=Male, 2=Female typically in datasets
+                Age: row['Age'],
+                AgeUnit: 'y', // Default to years
+                AdmWt: row['AdmWt'] || 0,
+                DateAdm: row['DateAdm'],
+                DateDsc: row['DateDsc'],
+                LOS: row['LOS'] || 0,
+                PDx: row['PDx'],
+                SDxs: extractCodes(row, 'SDx'), // Look for SDx1, SDx2...
+                Procs: extractCodes(row, 'Proc'), // Look for Proc1, Proc2...
+                Expected_Result: row['Expected_Result'] || row['Expected Result'] || '',
+                Logic_Note: row['Logic_Note'] || row['Logic Note'] || '',
+                Status: 'Ready', // Ready, Processing, Success, Fail
+                Error: null
+            };
+        });
+
+        // Update UI
+        document.getElementById('step-upload').classList.add('hidden');
+        document.getElementById('step-preview').classList.remove('hidden');
+        document.getElementById('total-count').innerText = excelData.length;
+
+        renderTable();
+    }
+
+    function parseGender(val) {
+        if (!val) return 'N';
+        val = String(val).toUpperCase();
+        if (val === '1' || val === 'M' || val === 'NAM') return 'M';
+        if (val === '2' || val === 'F' || val === 'NU' || val === 'NỮ') return 'F';
+        return 'N';
+    }
+
+    function extractCodes(row, prefix) {
+        let codes = [];
+        // Check keys starting with prefix (e.g., SDx1, SDx2...)
+        Object.keys(row).forEach(key => {
+            if (key.startsWith(prefix) && row[key]) {
+                codes.push(String(row[key]).trim());
+            }
+        });
+        return codes.join(' ');
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('results-body');
+        tbody.innerHTML = '';
+
+        // Show only first 50 rows for preview performance if list is huge? No, user wants to see all.
+        // Let's render all but be mindful of large datasets.
+
+        excelData.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.id = `row-${item._id}`;
+            tr.className = item._id % 2 === 0 ? 'bg-gray-100 dark:bg-gray-800' : 'bg-gray-200 dark:bg-gray-700';
+
+            // Status Color
+            let statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">Pending</span>`;
+            if (item.Status === 'Pass') statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pass</span>`;
+            if (item.Status === 'Fail') statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-100-800">Fail</span>`;
+            if (item.Status === 'Error') statusBadge = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Error</span>`;
+
+            tr.innerHTML = `
+                <td class="px-4 py-3 whitespace-nowrap text-sm ">${item._id + 1}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">${item.CaseID}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm ">${item.Gender}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm ">${item.Age}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm ">${item.LOS}</td>
+                <td class="px-4 py-3 whitespace-nowrap text-sm ">${item.AdmWt || '-'}</td>
+                
+                <td class="px-4 py-3 text-sm text-red-100 font-medium text-blue-600">${item.PDx || '-'}</td>
+                <td class="px-4 py-3 text-sm  break-words max-w-[150px] truncate" title="${item.SDxs}">${item.SDxs || '-'}</td>
+                <td class="px-4 py-3 text-sm  break-words max-w-[150px] truncate" title="${item.Procs}">${item.Procs || '-'}</td>
+                
+                <td class="px-3 py-3 text-xs text-cool-gray-600 dark:text-gray-300 font-medium bg-gray-50/50 dark:bg-gray-800/30 font-mono border-l border-gray-100 dark:border-gray-700/50">${item.Expected_Result || '-'}</td>
+                <td class="px-2 py-3 text-center w-16" title="Logic Note">
+                    ${item.Logic_Note ?
+                    `<button onclick="viewNote(${item._id})" class="text-gray-400 hover:text-blue-500 transition-colors p-1 rounded hover:bg-blue-50 dark:hover:bg-blue-900/50" title="View Note">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </button>`
+                    : '<span class="text-gray-300">-</span>'
+                }
+                </td>
+                
+                <td class="px-2 py-3 text-center w-24 text-sm font-bold text-gray-900 dark:text-white bg-blue-50/30 dark:bg-blue-900/20 border-l border-r border-gray-200 dark:border-gray-600 font-mono" id="actual-${item._id}">-</td>
+                <td class="px-3 py-3 whitespace-nowrap text-center" id="status-${item._id}">${statusBadge}</td>
+                <td class="px-3 py-3 text-xs text-gray-500 italic" id="note-${item._id}"></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    async function runTests() {
+        const isSave = false; // Default to false, use saveToDatabase() to save
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+
+        progressContainer.classList.remove('hidden');
+        progressBar.style.width = '0%';
+
+        let processedCount = 0;
+        const total = excelData.length;
+
+        // Process in batches
+        for (let i = 0; i < total; i += BATCH_SIZE) {
+            const batch = excelData.slice(i, i + BATCH_SIZE);
+
+            // Prepare payload
+            const records = batch.map(item => ({
+                id: String(item._id), // Use internal ID for matching results
+                case_id: item.CaseID,
+                sex: item.Gender,
+                age: parseInt(item.Age),
+                age_unit: item.AgeUnit,
+                disc: '1', // Default discharge status
+                admwt: parseFloat(item.AdmWt),
+                losd: parseInt(item.LOS),
+                pdx: item.PDx,
+                sdxs: item.SDxs,
+                procs: item.Procs,
+                save: isSave
+            }));
+
+            try {
+                const response = await fetch('/vietnamdrg/api/test-suite/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': 'JN0FcwaCLkDmmkRjTWfqJv3aQsrbqCA9YaQ7vQ61fyrJeSpPqKtBkN9kmB5X1TvW'
+                    },
+                    body: JSON.stringify({ records: records })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.results) {
+                    updateResults(result.results);
+                }
+            } catch (error) {
+                console.error('Batch error:', error);
+            }
+
+            processedCount += batch.length;
+            const percentage = Math.round((processedCount / total) * 100);
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        // Calculate and display summary
+        updateSummary();
+        alert('Completed!');
+    }
+
+    // Save to Database - Run tests with save flag
+    async function saveToDatabase() {
+        if (!excelData || excelData.length === 0) {
+            alert('No data to save!');
+            return;
+        }
+
+        if (!confirm('Save all test results to database?')) {
+            return;
+        }
+
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+
+        progressContainer.classList.remove('hidden');
+        progressBar.style.width = '0%';
+
+        let processedCount = 0;
+        const total = excelData.length;
+
+        // Process in batches with save=true
+        for (let i = 0; i < total; i += BATCH_SIZE) {
+            const batch = excelData.slice(i, i + BATCH_SIZE);
+
+            // Prepare payload with save=true
+            const records = batch.map(item => ({
+                id: String(item._id),
+                case_id: item.CaseID,
+                sex: item.Gender,
+                age: parseInt(item.Age),
+                age_unit: item.AgeUnit,
+                disc: '1',
+                admwt: parseFloat(item.AdmWt),
+                losd: parseInt(item.LOS),
+                pdx: item.PDx,
+                sdxs: item.SDxs,
+                procs: item.Procs,
+                save: true // Always save
+            }));
+
+            try {
+                const response = await fetch('/vietnamdrg/api/test-suite/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': 'JN0FcwaCLkDmmkRjTWfqJv3aQsrbqCA9YaQ7vQ61fyrJeSpPqKtBkN9kmB5X1TvW'
+                    },
+                    body: JSON.stringify({ records: records })
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.results) {
+                    updateResults(result.results);
+                }
+            } catch (error) {
+                console.error('Batch error:', error);
+            }
+
+            processedCount += batch.length;
+            const percentage = Math.round((processedCount / total) * 100);
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        // Calculate and display summary
+        updateSummary();
+        alert('Saved to database!');
+    }
+
+    function updateResults(results) {
+        results.forEach(res => {
+            const rowId = res.id; // internal ID
+            const item = excelData.find(x => String(x._id) === rowId);
+            if (!item) return;
+
+            // Update UI
+            const actualEl = document.getElementById(`actual-${rowId}`);
+            const statusEl = document.getElementById(`status-${rowId}`);
+            const noteEl = document.getElementById(`note-${rowId}`);
+
+            if (res.error) {
+                statusEl.innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Error</span>`;
+                noteEl.innerText = res.error;
+                item.Status = 'Error';
+            } else {
+                let actualDRG = res.drg_code;
+
+                // --- Frontend Cleanup: Remove backend HTML error ---
+                if (actualDRG && (actualDRG.includes('<span') || actualDRG.includes('Không tìm thấy') || actualDRG.includes('No matching'))) {
+                    actualDRG = 'No DRG';
+                    // Also mark as Fail if not already
+                    item.Status = 'Fail';
+                    statusEl.innerHTML = `<span class="px-2 py-0.5 inline-flex text-xs leading-4 font-semibold rounded-full bg-red-500 text-white">No DRG</span>`;
+                }
+
+                actualEl.innerText = actualDRG;
+
+                // Compare (simple string contains check or exact match)
+                const expected = normalizeDRG(item.Expected_Result);
+                const actual = normalizeDRG(actualDRG);
+
+                if (actual.includes(expected) || expected.includes(actual)) {
+                    statusEl.innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Pass</span>`;
+                    item.Status = 'Pass';
+                    // Clear System Log if success
+                    item.System_Log = '';
+                } else {
+                    statusEl.innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Fail</span>`;
+                    item.Status = 'Fail';
+                    // Store System Log
+                    if (res.explain) {
+                        item.System_Log = res.explain;
+                        // Show link to view system log
+                        noteEl.innerHTML = `<a href="#" onclick="viewLog(\`${escapeHtml(res.explain)}\`); return false;" class="text-blue-500 hover:underline">View Log</a>`;
+                    } else if (res.error) {
+                        item.System_Log = res.error;
+                        noteEl.innerText = res.error;
+                    } else {
+                        item.System_Log = "Result mismatch";
+                    }
+                }
+
+                // If saved
+                if (res.saved) {
+                    noteEl.innerHTML = (noteEl.innerHTML || '') + ` <span class="text-green-600 font-bold ml-1">✓ Saved</span>`;
+                }
+            }
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/`/g, '\\`').replace(/\\/g, '\\\\').replace(/"/g, '&quot;');
+    }
+
+    // Better Log Viewer
+    window.viewLog = function (logContent) {
+        // You could replace this with a beautiful modal later
+        alert(logContent);
+    };
+
+    window.viewNote = function (id) {
+        const item = excelData.find(x => x._id === id);
+        if (item && item.Logic_Note) {
+            alert(item.Logic_Note);
+        } else {
+            alert("No logic note available.");
+        }
+    };
+
+    // Update Test Summary
+    function updateSummary() {
+        if (!excelData || excelData.length === 0) return;
+
+        const summary = excelData.reduce((acc, item) => {
+            if (item.Status === 'Pass') acc.pass++;
+            else if (item.Status === 'Fail') acc.fail++;
+            else if (item.Status === 'Error') acc.error++;
+            return acc;
+        }, { pass: 0, fail: 0, error: 0 });
+
+        // Update UI
+        document.getElementById('pass-count').innerText = summary.pass;
+        document.getElementById('fail-count').innerText = summary.fail;
+        document.getElementById('error-count').innerText = summary.error;
+
+        // Show summary section
+        document.getElementById('test-summary').classList.remove('hidden');
+    }
+
+    function normalizeDRG(code) {
+        if (!code) return '';
+        // Remove spaces, remove "DC", remove "DRG"
+        return code.toString().toUpperCase().replace(/DC/g, '').replace(/DRG/g, '').replace(/ /g, '');
+    }
+
+    // Export Results to Excel
+    window.exportResults = function () {
+        if (!excelData || excelData.length === 0) {
+            alert("No data to export!");
+            return;
+        }
+
+        const exportData = excelData.map(row => {
+            // Clone row to avoid modifying original
+            const newRow = { ...row };
+
+            // Remove internal tracking fields
+            delete newRow._id;
+
+            // Add/Rename Result columns for clarity
+            // Get actual text from DOM in case it was modified by view logic
+            const actualEl = document.getElementById('actual-' + row._id);
+            newRow['Actual Result'] = actualEl ? actualEl.innerText : (row.drg_code || '');
+
+            newRow['Test Status'] = row.Status || 'Pending';
+
+            // System Note / Error Log (New Column)
+            // Logic Note (Original) is preserved automatically as it matches the input key
+
+            // Only add Error Log if Failed or Error and we have a logged message
+            if (row.Status === 'Fail' || row.Status === 'Error') {
+                // Check if we stored system log somewhere. 
+                // If runTests overwrote item.Logic_Note, we might have lost original.
+                // Ideally runTests should store to item.System_Log
+                // For now, let's assume item.Logic_Note contains the SYSTEM log if overwitten, 
+                // BUT user said "Logic Note" is original.
+
+                // CORRECTION: In runTests we need to store result to separate field.
+                // let's try to recover System_Log from row if present, else empty
+                newRow['Error Log'] = row.System_Log || '';
+            } else {
+                newRow['Error Log'] = '';
+            }
+
+            // Remove internal keys if present
+            delete newRow.drg_code;
+            delete newRow.Status;
+            delete newRow.System_Log; // Clean up internal
+            // DO NOT delete newRow.Logic_Note if you want to keep original input
+            // delete newRow.Expected_Result; // Remove duplicates if needed
+
+            return newRow;
+        });
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Results");
+        const dateStr = new Date().toISOString().slice(0, 10);
+        XLSX.writeFile(wb, `DRG_Result_${dateStr}.xlsx`);
+    };
+
+    function resetAll() {
+        if (confirm('Are you sure you want to reset all data?')) {
+            location.reload();
+        }
+    }
+</script>
+
+
+                    
+                </div>
+            </div>
+
+            
+
+        </div>
+    </div>
+
+
+
+        <div id="modal-overlay" class="backdrop-blur-xs bg-base-900/80 bottom-0 fixed hidden left-0 mr-1 right-0 top-0 z-60"></div>
+
+        
+
+
+    <div class="backdrop-blur-xs bg-base-900/80 flex flex-col fixed inset-0 p-4 lg:p-32 z-[1000]"
+         x-data="searchCommand()"
+         x-on:opencommand.window="handleOpen()"
+         x-on:keydown.window="handleShortcut($event)"
+         x-show="openCommandResults">
+        <div class="bg-white flex flex-col max-w-3xl min-h-0 mx-auto overflow-hidden rounded-default shadow-lg w-full dark:bg-base-800" x-on:click.outside="handleOutsideClick()">
+            <div class="flex flex-row items-center px-4 w-full">
+                <button type="submit" id="command-submit" class="group flex items-center focus:outline-hidden">
+                    <span class="block material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:hidden">
+                        search
+                    </span>
+
+                    <span class="hidden material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:block animate-spin">
+                        progress_activity
+                    </span>
+                </button>
+
+                <input
+                    autocomplete="off"
+                    type="search"
+                    placeholder="Gõ để tìm kiếm"
+                    class="font-medium grow px-2 py-4 placeholder-font-subtle-light text-font-default-light focus:outline-hidden dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                    name="s"
+                    id="search-input-command"
+                    x-ref="searchInputCommand"
+                    hx-indicator="#command-submit"
+                    x-on:keydown.escape.prevent="handleEscape()"
+                    x-on:keydown.arrow-down.prevent="nextItem()"
+                    x-on:keydown.arrow-up.prevent="prevItem()"
+                    x-on:keydown.enter.prevent="selectItem(true)"
+                    hx-get="/search/?extended=1"
+                    hx-trigger="keyup changed delay:500ms"
+                    hx-select="#command-results-list"
+                    hx-select-oob="#command-results-note"
+                    hx-target="#command-results">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    esc
+</kbd>
+
+            </div>
+
+            <div class="grow h-full overflow-auto w-full dark:border-base-700" data-simplebar x-on:htmx:after-swap="handleContentLoaded($event)" x-bind:class="{'border-t border-base-200': items !== undefined && items.length > 0}">
+                <div id="command-results"></div>
+
+                
+                    
+
+<div id="command-history" x-show="!hasResults">
+    <template x-if="commandHistory.length > 0">
+        <div class="">
+            <h3 class="border-b border-base-200 font-semibold text-font-important-light dark:text-font-important-dark dark:border-base-700 p-4">
+                Recent searches
+            </h3>
+
+            <ul>
+                <template x-for="(item, index) in commandHistory">
+                    <li class="border-b border-base-200 dark:border-base-700 last:border-b-0"
+                        x-bind:class="{'active': currentIndex === index + 1}"
+                        x-on:mouseenter="currentIndex = index + 1">
+                        <a class="block flex flex-row gap-4 items-center p-4 transition-colors"
+                           x-bind:data-title="item.title"
+                           x-bind:data-description="item.description"
+                           x-bind:href="item.link"
+                           x-bind:class="{'bg-base-50 dark:bg-white/[.04]': currentIndex === index + 1}">
+                            <span class="truncate">
+                                <span class="font-medium text-font-important-light dark:text-font-important-dark" x-text="item.title"></span>
+                                <span class="mx-1 opacity-50 group-[.active]:text-white">•</span>
+                                <span class="text-font-subtle-light dark:text-font-subtle-dark group-[.active]:text-white" x-text="item.description"></span>
+                            </span>
+
+                            <span class="flex flex-row items-center ml-auto">
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-primary-600 dark:hover:text-primary-500"
+                                      x-on:click="toggleFavorite($event, index);"
+                                      x-bind:class="{'text-primary-600 dark:text-primary-500': item.favorite}">
+                                    favorite
+                                </span>
+
+                                <span class="bg-base-200 h-6 w-px mx-3"></span>
+
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-base-500 dark:hover:text-base-400" x-on:click="removeFromHistory($event, index);">
+                                    close
+                                </span>
+                            </span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </template>
+
+    <template x-if="commandHistory.length === 0">
+        <div class="border-t border-base-200 px-4 py-8 dark:border-base-700">
+            <p class="text-lg text-center">
+                No recent searches
+            </p>
+        </div>
+    </template>
+</div>
+</div>
+
+                
+
+                <div id="command-results-note"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <script src="/static/unfold/js/simplebar/simplebar.js"></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"ea11a134e56d43daad6c73784d6e2c31","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

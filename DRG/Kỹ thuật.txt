@@ -1,0 +1,2231 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="vi" dir="ltr"  x-data="{ adminTheme: $persist('auto').as('adminTheme') }" x-bind:class="{'dark': adminTheme === 'dark' || (adminTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" x-cloak>
+    <head>
+        <title> 1.101;1.202;2.129;3.146;3.148;10.57 - Chọc dịch não tủy thắt lưng | Thay đổi Kỹ thuật (Áp dụng từ 1/7/26) | Danh mục kỹ thuật PHCN</title>
+
+        <link href="/static/unfold/fonts/inter/styles.css" rel="stylesheet">
+        <link href="/static/unfold/fonts/material-symbols/styles.css" rel="stylesheet">
+
+        
+            <link href="/static/base/css/styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/btn-styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/loading.css" rel="stylesheet">
+        
+            <link href="/static/css/styles.css" rel="stylesheet">
+        
+
+        
+            <link rel="icon" href="/static/logo/logo.png" type="image/svg+xml" sizes="32x32">
+        
+
+        <link href="/static/unfold/css/styles.css" rel="stylesheet">
+        <link href="/static/unfold/css/simplebar/simplebar.css" rel="stylesheet">
+
+        <script src="/static/unfold/js/alpine/alpine.anchor.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.persist.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.sort.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.resize.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.js" defer></script>
+        <script src="/static/unfold/js/htmx/htmx.js"></script>
+        <script src="/static/unfold/js/chart/chart.js"></script>
+
+        
+            <script src="/static/base/js/loading.js"></script>
+        
+            <script src="/static/base/js/whiteneuron.js"></script>
+        
+
+        
+
+        
+    <script src="/jsi18n/"></script>
+    <link href="/static/admin/css/vendor/select2/select2.css" media="screen" rel="stylesheet">
+<link href="/static/admin/css/autocomplete.css" media="screen" rel="stylesheet">
+<script src="/static/admin/js/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin/js/calendar.js"></script>
+<script src="/static/js/icd9_fetcher.js"></script>
+<script src="/static/admin/js/vendor/select2/select2.full.js"></script>
+<script src="/static/unfold/filters/js/DateTimeShortcuts.js"></script>
+<script src="/static/admin/js/jquery.init.js"></script>
+<script src="/static/admin/js/core.js"></script>
+<script src="/static/unfold/js/select2.init.js"></script>
+<script src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script src="/static/admin/js/actions.js"></script>
+<script src="/static/admin/js/urlify.js"></script>
+<script src="/static/admin/js/prepopulate.js"></script>
+<script src="/static/admin/js/vendor/xregexp/xregexp.min.js"></script>
+
+
+        <script src="/static/unfold/js/app.js"></script>
+
+        
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+
+        
+            <meta name="robots" content="NONE,NOARCHIVE">
+        
+    </head>
+
+    <body class="antialiased bg-base-50 font-sans text-font-default-light text-sm dark:bg-base-900 dark:text-font-default-dark  app-techniques model-techniquev2 change-form" data-admin-utc-offset="25200"
+          x-data="{
+                  activeTab: 'general',
+                  sidebarMobileOpen: false,
+                  sidebarDesktopOpen: (localStorage.getItem('sidebarDesktopOpen') !== null) ? (localStorage.getItem('sidebarDesktopOpen') == '1') : true
+                  }"
+          x-init="
+                  activeTab = getCurrentTab() || 'general';
+                  $watch('sidebarDesktopOpen', value => localStorage.setItem('sidebarDesktopOpen', value ? '1' : '0'));
+                 "
+    >
+        
+            <style id="unfold-theme-colors">
+                :root {
+                    
+                        --border-radius: 6px;
+                    
+
+                    
+                        
+                            --color-base-50: rgb(249, 250, 251);
+                        
+                            --color-base-100: rgb(243, 244, 246);
+                        
+                            --color-base-200: rgb(229, 231, 235);
+                        
+                            --color-base-300: rgb(209, 213, 219);
+                        
+                            --color-base-400: rgb(156, 163, 175);
+                        
+                            --color-base-500: rgb(107, 114, 128);
+                        
+                            --color-base-600: rgb(75, 85, 99);
+                        
+                            --color-base-700: rgb(55, 65, 81);
+                        
+                            --color-base-800: rgb(31, 41, 55);
+                        
+                            --color-base-900: rgb(17, 24, 39);
+                        
+                            --color-base-950: rgb(3, 7, 18);
+                        
+                    
+                        
+                            --color-primary-50: rgb(240, 249, 255);
+                        
+                            --color-primary-100: rgb(224, 242, 254);
+                        
+                            --color-primary-200: rgb(186, 230, 253);
+                        
+                            --color-primary-300: rgb(125, 211, 252);
+                        
+                            --color-primary-400: rgb(56, 189, 248);
+                        
+                            --color-primary-500: rgb(14, 165, 233);
+                        
+                            --color-primary-600: rgb(2, 132, 199);
+                        
+                            --color-primary-700: rgb(3, 105, 161);
+                        
+                            --color-primary-800: rgb(7, 89, 133);
+                        
+                            --color-primary-900: rgb(12, 74, 110);
+                        
+                            --color-primary-950: rgb(8, 47, 73);
+                        
+                    
+                        
+                            --color-font-subtle-light: rgb(107, 114, 128);
+                        
+                            --color-font-subtle-dark: rgb(156, 163, 175);
+                        
+                            --color-font-default-light: rgb(75, 85, 99);
+                        
+                            --color-font-default-dark: rgb(209, 213, 219);
+                        
+                            --color-font-important-light: rgb(17, 24, 39);
+                        
+                            --color-font-important-dark: rgb(243, 244, 246);
+                        
+                    
+                }
+            </style>
+        
+
+        
+    <!-- Overlay loading -->
+    <div id="loading-overlay" display="flex">
+        <img src="/static/base/images/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- toast -->
+    <div class="ui-toast ui-toast-top ui-toast-end z-50" id="toast-container">
+    </div>
+    
+    <div id="page" class="flex max-w-full min-h-screen ">
+        
+            
+                
+
+<div class="relative z-60">
+    <div class="fixed hidden xl:relative xl:block w-[288px] " x-bind:class="{'xl:hidden!': !sidebarDesktopOpen, 'block!': sidebarMobileOpen}">
+        <div class="bg-base-50 relative z-30 dark:bg-base-900">
+            <div id="nav-sidebar" class="bg-base-50 border-r border-base-200 bottom-0 fixed max-h-screen top-0 w-[288px] dark:border-base-800 dark:bg-base-900 ">
+                
+                    
+
+<nav id="nav-sidebar-inner" class="bg-base-50 flex flex-col min-h-screen dark:text-font-default-dark dark:bg-base-950/20 ">
+    
+
+<div class="border-b border-base-200 flex gap-3 items-center h-[65px] mb-6 dark:border-base-800 px-3 " x-data="{ openDropdown: false }">
+    <div class="bg-transparent flex font-semibold gap-3 grow min-w-0 h-[64px] items-center px-3 cursor-pointer transition-all -mx-3 px-6 hover:bg-base-100 dark:hover:bg-white/[.06]"
+         
+             x-on:click="openDropdown = !openDropdown"
+             x-bind:class="{'bg-base-100 dark:bg-white/[.06]': openDropdown, 'bg-transparent': !openDropdown}"
+         
+    >
+        
+            
+
+
+    <div class="shrink-0">
+        <span>
+        
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="h-[38px] hidden dark:block"/>
+
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="block h-[38px] dark:hidden" />
+        
+    </span>
+    </div>
+
+
+<div class="flex flex-col grow justify-center min-w-0">
+    <div class="text-important tracking-tight *:truncate xl:text-sm">
+        
+    <div id="site-name">
+    
+        Danh mục kỹ thuật PHCN
+    
+</div>
+
+
+    </div>
+
+    
+        <div class="font-normal text-subtle text-xs truncate">
+            Trang quản trị
+        </div>
+    
+</div>
+
+        
+
+        
+            <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+                unfold_more
+            </span>
+        
+    </div>
+
+    <span class="material-symbols-outlined block cursor-pointer h-[18px] xl:hidden! hover:text-base-700 dark:hover:text-base-200" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+        close
+    </span>
+
+    
+
+
+    <div class="absolute bg-white border border-base-200 flex flex-col left-3 py-1 rounded-default shadow-lg top-[73px] w-[264px] z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openDropdown" x-transition x-on:click.outside="openDropdown = false">
+        
+            <a href="https://whiteneuron.com/" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark" 
+>
+                
+                    <span class="material-symbols-outlined">
+                        diamond
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Công ty TNHH White Neuron
+                </span>
+            </a>
+        
+            <a href="/cdn-cgi/l/email-protection#0b6a6563657f4b7c63627f6e656e7e79646525686466" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark">
+                
+                    <span class="material-symbols-outlined">
+                        rocket_launch
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Email: <span class="__cf_email__" data-cfemail="8feee1e7e1fbcff8e7e6fbeae1eafafde0e1a1ece0e2">[email&#160;protected]</span>
+                </span>
+            </a>
+        
+    </div>
+
+
+</div>
+
+
+    
+
+
+    
+        <div class="mb-2.5 mx-3 relative" x-data="searchDropdown()" x-on:keydown.window="applyShortcut($event)" x-on:click.outside="openSearchResults = false">
+            <div class="bg-white border border-base-200 flex flex-row items-center px-3 rounded-default relative shadow-xs w-full focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600 dark:bg-base-900 dark:border-base-700">
+                <span class="material-symbols-outlined md-18 text-base-400">manage_search</span>
+
+                <input type="search"
+                       id="nav-filter"
+                       name="s"
+                       x-ref="searchInput"
+                       x-on:focus="openSearchResults = true; currentIndex = 0"
+                       x-on:keydown="openSearchResults = true;"
+                       x-on:keydown.arrow-down.prevent="nextItem()"
+                       x-on:keydown.arrow-up.prevent="prevItem()"
+                       x-on:keydown.escape.prevent="openSearchResults = false; if ($refs.searchInput.value === '') { $refs.searchInput.blur() } else { $refs.searchInput.value = '' }"
+                       x-on:keydown.enter.prevent="selectItem()"
+                       x-on:search="currentIndex = 0"
+                       hx-get="/search/"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#search-results"
+                       class="grow font-medium min-w-0 overflow-hidden p-2 placeholder-font-subtle-light truncate focus:outline-hidden dark:bg-base-900 dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                       placeholder="Search apps and models..."
+                       aria-label="Filter navigation items">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    t
+</kbd>
+
+            </div>
+
+            <div id="search-results" x-show="openSearchResults"></div>
+        </div>
+    
+
+
+
+    
+        
+
+
+    <div id="nav-sidebar-apps" class="h-0 grow overflow-auto" data-simplebar>
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Điều hướng
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/base/app/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                dashboard
+                                            </span>
+                                        
+
+                                        <span>Bảng điều khiển</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notification/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notifications
+                                            </span>
+                                        
+
+                                        <span>Thông báo</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+                +
+            
+            1
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/feedbacks/feedbackdata/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                feedback
+                                            </span>
+                                        
+
+                                        <span>Phản hồi</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Danh mục kỹ thuật PHCN
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/techniques/rehab_technique/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>Kỹ thuật (Áp dụng trước 1/7/26)</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/techniques/rehab_techniquev2/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>Kỹ thuật (Áp dụng từ 1/7/26)</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Kỹ thuật (Áp dụng trước 1/7/26)
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/techniques/chapter/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>Chương</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/techniques/technique/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                build
+                                            </span>
+                                        
+
+                                        <span>Kỹ thuật</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: true}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Kỹ thuật (Áp dụng từ 1/7/26)
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/techniques/chapterv2/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>Chương</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/techniques/techniquev2/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 bg-base-100 font-semibold text-primary-600 dark:bg-white/[.06] dark:text-primary-500 active">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                build
+                                            </span>
+                                        
+
+                                        <span>Kỹ thuật</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+                +
+            
+            1
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Tài liệu API
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/swagger/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+
+                                        <span>Giao diện Swagger</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/redoc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+
+                                        <span>Giao diện ReDoc</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Người dùng &amp; Nhóm
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/user/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                person
+                                            </span>
+                                        
+
+                                        <span>Người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/useractivity/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                history
+                                            </span>
+                                        
+
+                                        <span>Hoạt động người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            172
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/auth/group/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                group
+                                            </span>
+                                        
+
+                                        <span>Nhóm</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Hệ thống
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/image/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                image
+                                            </span>
+                                        
+
+                                        <span>Hình ảnh</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/mail/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                email
+                                            </span>
+                                        
+
+                                        <span>Email</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notificationconfig/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notification_important
+                                            </span>
+                                        
+
+                                        <span>Cấu hình thông báo</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+    </div>
+
+    
+
+
+    
+
+    <div class="border-t border-base-200 px-6 py-3 relative dark:border-base-800" x-data="{ openUserLinks: false }">
+    <nav class="absolute bg-white border border-base-200 flex flex-col leading-none py-1 rounded-default shadow-lg bottom-[73px] left-3 right-3 z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openUserLinks" x-transition x-on:click.outside="openUserLinks = false">
+        
+
+
+    <div class="border-b border-base-200 flex flex-row gap-1 mb-1 pb-1 px-2 dark:border-base-700">
+        <a class="cursor-pointer flex flex-row grow px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'light'"
+           x-bind:class="adminTheme == 'light'  && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">light_mode</span>
+            <span class="leading-none self-center">Light</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow leading-none -ml-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'dark'"
+           x-bind:class="adminTheme == 'dark' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">dark_mode</span>
+            <span class="leading-none self-center">Dark</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow -mr-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'auto'"
+           x-bind:class="adminTheme == 'auto' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">computer</span>
+            <span class="leading-none self-center">Hệ thống</span>
+        </a>
+    </div>
+
+
+
+        
+
+
+
+
+
+
+    
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="P2AHidE90U3e48NsqUtfzsyHrU6b7Tb5LLqKpGmJT2Vb5b8eUkidMy6S3BpqAb9v">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="vi">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!">
+        
+
+        Tiếng Việt <span class="ml-auto uppercase font-semibold text-xs text-subtle">vi</span>
+    </button>
+</form>
+
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="P2AHidE90U3e48NsqUtfzsyHrU6b7Tb5LLqKpGmJT2Vb5b8eUkidMy6S3BpqAb9v">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="en">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 ">
+        
+
+        English <span class="ml-auto uppercase font-semibold text-xs text-subtle">en</span>
+    </button>
+</form>
+
+        
+    
+
+    <div class="border-t border-base-200 mt-1 pt-1 dark:border-base-700"></div>
+
+
+
+        
+
+        
+
+<div x-data="{ openUserLinks: false }">
+    <div class="flex items-center justify-center">
+        <a class="flex items-center justify-center cursor-pointer h-8 w-8 hover:text-base-700 dark:hover:text-base-200" @click="openUserLinks = true">
+            
+                <span class="material-symbols-outlined">person</span>
+            
+        </a>
+    </div>
+
+    <!-- Dialog Overlay -->
+    <div 
+        x-show="openUserLinks"
+        x-cloak
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        @click.self="openUserLinks = false"
+        @keydown.escape.window="openUserLinks = false"
+    >
+        <!-- Dialog Content -->
+        <div 
+            x-show="openUserLinks"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-white dark:bg-base-800 rounded-lg shadow-xl w-full max-w-sm border border-base-200 dark:border-base-700"
+        >
+            <!-- Header -->
+            <div class="border-b border-base-200 dark:border-base-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    
+                        <span class="material-symbols-outlined text-4xl">person</span>
+                    
+                    <span class="font-medium text-base-900 dark:text-base-100">
+                        admin
+                    </span>
+                </div>
+                <button 
+                    @click="openUserLinks = false"
+                    class="text-base-500 hover:text-base-700 dark:text-base-400 dark:hover:text-base-200"
+                >
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="flex flex-col py-2">
+                
+                <a 
+                    href="/base/userprofile/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    Hồ sơ người dùng
+                </a>
+                
+                
+                
+                <a 
+                    href="/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                    Xem trang
+                </a>
+                
+
+                
+                    
+                        <a 
+                            href="/password_change/" 
+                            class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                            @click="openUserLinks = false"
+                        >
+                            <span class="material-symbols-outlined text-lg">lock</span>
+                            Đổi mật khẩu
+                        </a>
+                    
+                
+
+                <!-- Logout -->
+                <div class="border-t border-base-200 dark:border-base-700 mt-2 pt-2">
+                    <form id="logout-form" method="post" action="/logout/" class="mx-2">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="P2AHidE90U3e48NsqUtfzsyHrU6b7Tb5LLqKpGmJT2Vb5b8eUkidMy6S3BpqAb9v">
+                        <button 
+                            type="submit" 
+                            class="bg-none block cursor-pointer px-3 py-2 text-left text-red-500 rounded-default w-full hover:bg-red-100 dark:hover:bg-red-500/20 dark:hover:text-red-500 flex items-center gap-2"
+                            onclick="document.cookie='skip_auto_guest=1; path=/; max-age=31536000';"
+                        >
+                            <span class="material-symbols-outlined text-lg">logout</span>
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+    </nav>
+
+    <div class="cursor-pointer flex flex-row gap-3 items-center min-h-[64px] -mx-6 -my-3 px-6 py-3 hover:bg-base-100 dark:hover:bg-base-800" x-on:click="openUserLinks = !openUserLinks" x-bind:class="{'bg-base-100 dark:bg-base-800': openUserLinks}">
+        
+            <div class="bg-white bg-cover h-[38px] flex items-center justify-center rounded-default select-none shadow min-w-[38px] w-[38px] dark:bg-base-700">
+                <span class="material-symbols-outlined text-base-400">person</span>
+            </div>
+        
+        <div class="flex flex-col select-none min-w-0">
+            <div class="font-semibold text-important tracking-tight truncate">
+                admin
+            </div>
+
+            
+                <div class="font-normal text-subtle text-xs truncate">
+                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f514b5e51574b527f58525e5653115c5052">[email&#160;protected]</a>
+                </div>
+            
+        </div>
+
+        <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+            unfold_more
+        </span>
+    </div>
+</div>
+</nav>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+        
+
+        <div id="main" class="bg-white flex flex-col grow min-w-0 dark:bg-base-900 ">
+            
+                
+
+<div class="bg-white border-b border-base-200 mb-6 px-4 z-40 dark:bg-base-900 dark:border-base-800 dark:text-font-default-dark ">
+    <div class="container flex items-center h-16 mx-auto py-4">
+        <div id="header-inner" class="flex items-center relative w-full">
+            <div class="flex items-center w-full">
+                
+                    
+                        
+                            
+
+<div class="flex flex-row grow font-semibold items-center min-w-0 mr-3">
+    
+        <span class="cursor-pointer flex flex-row items-center">
+            <span class="material-symbols-outlined hidden! xl:block!" x-on:click="sidebarDesktopOpen = !sidebarDesktopOpen; localStorage.setItem('sidebarDesktopOpen', sidebarDesktopOpen ? '1' : '0');">
+                dock_to_right
+            </span>
+
+            <span class="material-symbols-outlined block! xl:hidden!" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+                dock_to_right
+            </span>
+        </span>
+
+        <span class="block bg-base-200 h-5 mx-3 w-px dark:bg-base-700"></span>
+    
+
+    
+
+
+    
+        
+
+        <a href="/techniques/techniquev2/" class="block h-[18px] mr-3" title="Go back">
+            <span class="material-symbols-outlined">
+                arrow_back
+            </span>
+        </a>
+    
+
+
+
+    <h1 class="overflow-hidden leading-5 text-ellipsis text-font-important-light whitespace-nowrap xl:text-base dark:text-font-important-dark">
+        <a href="/techniques/" class="align-middle inline-block leading-5 tracking-tight">
+        Kỹ thuật
+        </a ><span class="material-symbols-outlined inline-block align-middle leading-5 mx-2 text-base-400 dark:text-base-500">chevron_right</span><a href="/techniques/techniquev2/" class="align-middle inline-block leading-5 tracking-tight">
+        Kỹ thuật (Áp dụng từ 1/7/26)
+        </a ><span class="material-symbols-outlined inline-block align-middle leading-5 mx-2 text-base-400 dark:text-base-500">chevron_right</span><a href="/techniques/techniquev2/35/change/" class="align-middle inline-block leading-5 tracking-tight">
+        1.101;1.202;2.129;3.146;3.148;10.57 - Chọc dịch não tủy thắt lưng
+        </a >
+
+
+        
+    </h1>
+</div>
+
+                        
+
+                        
+                            
+
+<div class="flex flex-row gap-4 items-center ml-auto">
+    
+        <span class="inline-block font-semibold h-6 leading-6 px-2 rounded-default text-[11px] uppercase whitespace-nowrap
+             
+                 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400
+             "  title="Thay đổi Kỹ thuật (Áp dụng từ 1/7/26)">
+    Đã phát hành
+</span>
+
+    
+
+    
+
+
+
+
+    
+        
+    
+        
+
+
+    
+    
+
+
+
+    
+        <div class="flex flex-row items-center">
+            <a href="/techniques/techniquev2/add/" class="addlink bg-primary-600 flex items-center h-[38px] justify-center -my-1 rounded-full w-[38px]" title="Thêm Kỹ thuật (Áp dụng từ 1/7/26)">
+                <span class="material-symbols-outlined text-white">add</span>
+            </a>
+        </div>
+    
+
+
+    
+
+    
+</div>
+
+                        
+                    
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+
+            
+                <div class="px-4">
+                    <div class="container mx-auto">
+                        
+
+                    </div>
+                </div>
+            
+
+            <div class="@container px-4 pb-4 grow">
+                <div id="content" class="container mx-auto colM">
+                    
+                        
+
+                    
+
+                    
+    <div id="content-main">
+        
+
+        
+
+        <form   x-bind:action="activeTab && activeTab !== 'general' ? window.location.pathname + window.location.search + '#' + activeTab : window.location.pathname + window.location.search" method="post" id="techniquev2_form" class="warn-unsaved-form" novalidate>
+            <input type="hidden" name="csrfmiddlewaretoken" value="P2AHidE90U3e48NsqUtfzsyHrU6b7Tb5LLqKpGmJT2Vb5b8eUkidMy6S3BpqAb9v">
+
+            
+
+            
+
+            <div class="flex flex-col gap-6">
+                
+
+                
+
+                
+
+                
+                    
+                        
+                            
+                                
+
+<fieldset class="module relative " x-show="activeTab == 'general'">
+    
+
+    
+
+    
+
+    
+
+    <div class="border dark:border-base-800 form-rows shadow-xs aligned border-base-200 rounded-default">
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row field-order group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark required" for="id_order">Thứ tự <span class="text-red-600">*</span></label>
+</div>
+
+<div class="grow relative">
+    
+        <input type="number" name="order" value="35" class="border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl " required aria-describedby="id_order_helptext" id="id_order">
+    
+
+    
+        
+    <div class="leading-relaxed mt-2 text-xs">
+        Số thứ tự liên tiếp từ tài liệu
+    </div>
+
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 field-chapter_order flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark required" for="id_chapter_order">Thứ tự trong chương <span class="text-red-600">*</span></label>
+</div>
+
+<div class="grow relative">
+    
+        <input type="number" name="chapter_order" value="35" class="border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl " required aria-describedby="id_chapter_order_helptext" id="id_chapter_order">
+    
+
+    
+        
+    <div class="leading-relaxed mt-2 text-xs">
+        Số thứ tự liên tiếp trong chương
+    </div>
+
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l field-name" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark required" for="id_name">Tên kỹ thuật <span class="text-red-600">*</span></label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="max-w-2xl relative w-full">
+    
+
+    
+
+    <input type="text" name="name" value="Chọc dịch não tủy thắt lưng" class="border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl " maxlength="500" required id="id_name">
+
+
+    
+
+    
+</div>
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col field-chapter border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark required" for="id_chapter">Chương <span class="text-red-600">*</span></label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="flex flex-row grow">
+    <input type="text" name="chapter" value="1" class="vForeignKeyRawIdAdminField border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl " required id="id_chapter">
+
+
+    
+        <a href="/techniques/chapterv2/?_to_field=id" class="related-lookup view-related bg-white border border-base-200 cursor-pointer flex items-center h-[38px] justify-center ml-2 rounded-default shadow-xs shrink-0 text-base-400 text-sm w-[38px] hover:text-base-700 dark:bg-base-900 dark:border-base-700 dark:text-base-500 dark:hover:text-base-200" id="lookup_id_chapter">
+            <span class="material-symbols-outlined">search</span>
+        </a>
+    
+
+    
+        <a href="/techniques/chapterv2/1/change/" title="1 - Thần kinh" class="flex items-center h-[38px] justify-center ml-4 rounded-default shrink-0 text-primary-600 text-sm truncate dark:text-primary-500">
+            1 - Thần kinh
+        </a>
+    
+</div>
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row last">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row lg:border-l group field-link_code" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark" for="id_link_code">Kỹ thuật Giai đoạn 1</label>
+</div>
+
+<div class="grow relative">
+    
+        <select name="link_code" data-ajax--cache="true" data-ajax--delay="250" data-ajax--type="GET" data-theme="admin-autocomplete" data-allow-clear="true" data-placeholder="" class="unfold-admin-autocomplete admin-autocomplete " data-ajax--url="/techniques/rehab_techniquev2/technique-autocomplete/" aria-describedby="id_link_code_helptext" id="id_link_code" multiple>
+  
+    
+        <option value="101" selected>1.101 - Nội soi màng phổi sinh thiết</option>
+    
+
+
+  
+    
+        <option value="202" selected>1.202 - Chọc dịch tủy sống</option>
+    
+
+
+  
+    
+        <option value="531" selected>2.129 - Chọc dò dịch não tủy</option>
+    
+
+
+  
+    
+        <option value="1267" selected>3.146 - Chọc dò tủy sống trẻ sơ sinh</option>
+    
+
+
+  
+    
+        <option value="1269" selected>3.148 - Chọc dịch tủy sống</option>
+    
+
+
+  
+    
+        <option value="11258" selected>10.57 - Chọc dịch não tủy thắt lưng (thủ thuật)</option>
+    
+
+
+</select>
+    
+
+    
+        
+    <div class="leading-relaxed mt-2 text-xs">
+        Chọn một hoặc nhiều kỹ thuật Giai đoạn 1 để liên kết với kỹ thuật Giai đoạn 2 này. Bạn có thể tìm kiếm theo mã hoặc tên.
+    </div>
+
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+    </div>
+
+    
+</fieldset>
+
+                            
+                        
+                            
+                                
+
+<fieldset class="module relative " x-show="activeTab == 'general'">
+    
+
+    
+        
+            <h2 class="bg-base-100 flex flex-row font-semibold h-[38px] items-center mb-4 px-3 rounded-default text-important dark:bg-white/[.02]  " >
+    
+        Ánh xạ ICD-9
+    
+</h2>
+
+        
+    
+
+    
+
+    
+
+    <div class="border dark:border-base-800 form-rows shadow-xs aligned border-base-200 rounded-default">
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l field-icd9_mapping" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark" for="id_icd9_mapping">Ánh xạ ICD-9</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="max-w-2xl relative w-full">
+    
+
+    
+
+    <input type="text" name="icd9_mapping" class="border border-base-200 bg-white font-medium min-w-20 placeholder-base-400 rounded-default shadow-xs text-font-default-light text-sm focus:outline-2 focus:-outline-offset-2 focus:outline-primary-600 group-[.errors]:border-red-600 focus:group-[.errors]:outline-red-600 dark:bg-base-900 dark:border-base-700 dark:text-font-default-dark dark:group-[.errors]:border-red-500 dark:focus:group-[.errors]:outline-red-500 dark:scheme-dark group-[.primary]:border-transparent disabled:!bg-base-50 dark:disabled:!bg-base-800 px-3 py-2 w-full max-w-2xl " maxlength="255" aria-describedby="id_icd9_mapping_helptext" id="id_icd9_mapping">
+
+
+    
+
+    
+</div>
+    
+
+    
+        
+    <div class="leading-relaxed mt-2 text-xs">
+        Nhập các mã ICD-9, phân cách bằng dấu chấm phẩy (;)
+    </div>
+
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row last">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark mb-2">Thông tin ICD-9</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="readonly break-words max-w-2xl py-2 text-sm *:rounded-default ">-</div>
+
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+    </div>
+
+    
+</fieldset>
+
+                            
+                        
+                            
+                        
+
+                        
+
+
+    
+        
+            <div class="border dark:border-base-800 form-rows shadow-xs aligned border-base-200 rounded-default" x-data="{ activeFieldsetTab: 'meta'}" x-show="activeTab == 'general'">
+                <div class="border-b border-base-200 border-dashed dark:border-base-800">
+                    <nav class="bg-base-100 cursor-pointer flex flex-col font-medium gap-1 m-2 p-1 rounded-default text-important dark:border-base-700 md:inline-flex md:flex-row md:w-auto dark:bg-white/[.06] *:flex *:flex-row *:gap-1 *:items-center *:px-2.5 *:py-[5px] *:rounded-default *:hover:bg-base-700/[.06] *:dark:hover:bg-white/[.06] [&>.active]:bg-white [&>.active]:shadow-xs [&>.active]:dark:bg-base-700 [&>.active]:hover:bg-white [&>.active]:dark:hover:bg-base-700">
+                        
+                            <a x-on:click="activeFieldsetTab = 'meta'" x-bind:class="activeFieldsetTab == 'meta' && 'active'">
+                                Meta
+
+                                
+                                    
+                                
+                            </a>
+                        
+                    </nav>
+                </div>
+
+                
+                    <div class="tab-wrapper fieldset-meta"
+                         x-show="activeFieldsetTab == 'meta'">
+                        
+
+<fieldset class="module relative  tab" >
+    
+
+    
+
+    
+
+    
+
+    <div class="aligned form-rows">
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row field-is_hidden group lg:border-l" >
+                
+                    
+                        
+    <div class="flex flex-col gap-2 py-2 lg:flex-row">
+        <div class="font-medium flex items-start -ml-2 min-w-32 w-32 lg:min-w-56 lg:w-56">
+            <label class="font-semibold ml-2 text-sm text-font-important-light dark:text-font-important-dark" for="id_is_hidden">Ẩn</label>
+        </div>
+
+        <div class="grow">
+            <div class="flex flex-col lg:flex-row">
+                <input type="checkbox" name="is_hidden" class="appearance-none bg-base-300 block cursor-pointer h-5 relative rounded-full transition-colors w-8 min-w-8 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none after:absolute after:bg-white after:content-[&#x27;&#x27;] after:bg-red-300 after:h-3 after:rounded-full after:shadow-xs after:transition-all after:left-1 after:top-1 after:w-3 checked:bg-green-500 checked:after:left-4 dark:bg-base-600 dark:checked:bg-green-700 " id="id_is_hidden">
+
+                
+            </div>
+
+            
+        </div>
+    </div>
+
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="form-row group/row field-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b field-is_deleted border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        
+    <div class="flex flex-col gap-2 py-2 lg:flex-row">
+        <div class="font-medium flex items-start -ml-2 min-w-32 w-32 lg:min-w-56 lg:w-56">
+            <label class="font-semibold ml-2 text-sm text-font-important-light dark:text-font-important-dark" for="id_is_deleted">Đã xóa</label>
+        </div>
+
+        <div class="grow">
+            <div class="flex flex-col lg:flex-row">
+                <input type="checkbox" name="is_deleted" class="appearance-none bg-base-300 block cursor-pointer h-5 relative rounded-full transition-colors w-8 min-w-8 disabled:cursor-not-allowed disabled:opacity-50 focus:outline-none after:absolute after:bg-white after:content-[&#x27;&#x27;] after:bg-red-300 after:h-3 after:rounded-full after:shadow-xs after:transition-all after:left-1 after:top-1 after:w-3 checked:bg-green-500 checked:after:left-4 dark:bg-base-600 dark:checked:bg-green-700 " id="id_is_deleted">
+
+                
+            </div>
+
+            
+        </div>
+    </div>
+
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="group/row field-row grid lg:grid-cols-2 form-row ">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark mb-2">Ngày tạo</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="readonly break-words max-w-2xl py-2 text-sm *:rounded-default ">09:11 Ngày 25 tháng 2 năm 2026</div>
+
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark mb-2">Tạo bởi</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="readonly break-words max-w-2xl py-2 text-sm *:rounded-default "><a href="/base/user/2/change/" class="text-link">admin</a></div>
+
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+            
+
+<div class="group/row field-row grid lg:grid-cols-2 form-row last">
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark mb-2">Ngày cập nhật</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="readonly break-words max-w-2xl py-2 text-sm *:rounded-default ">09:20 Ngày 06 tháng 3 năm 2026</div>
+
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+        
+            <div class="py-2.5 flex group-[.last]/row:border-b-0 group/line lg:first:border-l-0 field-line grow dark:border-base-800 px-3 flex-col border-dashed border-b border-base-200 lg:flex-row group lg:border-l" >
+                
+                    
+                        <div class="lg:min-w-56 lg:mt-2 lg:w-56">
+    <label class="block font-semibold mb-2 text-font-important-light text-sm dark:text-font-important-dark mb-2">Cập nhật bởi</label>
+</div>
+
+<div class="grow relative">
+    
+        <div class="readonly break-words max-w-2xl py-2 text-sm *:rounded-default "><a href="/base/user/2/change/" class="text-link">admin</a></div>
+
+    
+
+    
+
+    
+</div>
+
+                    
+                
+            </div>
+        
+    
+</div>
+
+        
+    </div>
+
+    
+</fieldset>
+
+                    </div>
+                
+            </div>
+        
+    
+
+
+                    
+                
+
+                
+
+                
+                    
+                
+
+                
+
+                
+                    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script id="django-admin-form-add-constants" src="/static/admin/js/change_form.js" async></script>
+                
+
+                
+<script id="django-admin-prepopulated-fields-constants"
+        src="/static/admin/js/prepopulate_init.js"
+        data-prepopulated-fields="[]">
+</script>
+
+            </div>
+
+            
+        </form>
+
+        
+
+        
+
+        
+    </div>
+
+
+                    
+                </div>
+            </div>
+
+            
+    
+
+<div id="submit-row" class="relative lg:sticky lg:bottom-0 z-40">
+    <div class="backdrop-blur-xs bg-white/80 rounded-b-default pb-4 px-4 dark:bg-base-900/80 lg:border-t lg:border-base-200 relative lg:scrollable-top lg:py-0 dark:border-base-800">
+        <div class="flex flex-col-reverse gap-3 items-center mx-auto lg:flex-row-reverse container lg:h-[64px]">
+            
+    
+                
+                    <button type="submit" form="techniquev2_form" name="_save"    
+
+class="font-medium inline-flex group items-center gap-2 px-3 py-2 relative rounded-default justify-center whitespace-nowrap cursor-pointer
+
+
+    border border-base-200 bg-primary-600 border-transparent text-white hover:bg-primary-600/80
+ w-full lg:w-auto" 
+ >
+
+                        Lưu lại
+                    
+</button>
+
+                
+
+                
+
+                
+                    <button type="submit" form="techniquev2_form" name="_continue"    
+
+class="font-medium inline-flex group items-center gap-2 px-3 py-2 relative rounded-default justify-center whitespace-nowrap cursor-pointer
+
+
+    border border-base-200 bg-white shadow-xs text-important dark:border-base-700 dark:bg-transparent hover:bg-base-100/80 dark:hover:bg-base-800/80
+ w-full lg:w-auto" 
+ >
+
+                        
+                            Lưu và tiếp tục chỉnh sửa
+                        
+                    
+</button>
+
+                
+
+                
+                    <button type="submit" form="techniquev2_form" name="_addanother"    
+
+class="font-medium inline-flex group items-center gap-2 px-3 py-2 relative rounded-default justify-center whitespace-nowrap cursor-pointer
+
+
+    border border-base-200 bg-white shadow-xs text-important dark:border-base-700 dark:bg-transparent hover:bg-base-100/80 dark:hover:bg-base-800/80
+ w-full lg:w-auto" 
+ >
+
+                        Lưu và thêm mới
+                    
+</button>
+
+                
+
+                
+
+                <div class="flex flex-col gap-3 mr-auto w-full lg:flex-row lg:w-auto">
+                    
+
+                    
+                        
+                        
+
+                        <a href="/techniques/techniquev2/35/delete/"       
+
+class="font-medium inline-flex group items-center gap-2 px-3 py-2 relative rounded-default justify-center whitespace-nowrap cursor-pointer
+
+
+    border border-red-600 bg-red-600 border-transparent text-white hover:bg-red-600/80
+ mr-auto w-full lg:w-auto" 
+ >
+
+                            Xóa Kỹ thuật (Áp dụng từ 1/7/26)
+                        
+</a>
+
+                    
+                </div>
+            
+    
+
+        </div>
+    </div>
+</div>
+
+
+        </div>
+    </div>
+
+
+
+        <div id="modal-overlay" class="backdrop-blur-xs bg-base-900/80 bottom-0 fixed hidden left-0 mr-1 right-0 top-0 z-60"></div>
+
+        
+
+
+    <div class="backdrop-blur-xs bg-base-900/80 flex flex-col fixed inset-0 p-4 lg:p-32 z-[1000]"
+         x-data="searchCommand()"
+         x-on:opencommand.window="handleOpen()"
+         x-on:keydown.window="handleShortcut($event)"
+         x-show="openCommandResults">
+        <div class="bg-white flex flex-col max-w-3xl min-h-0 mx-auto overflow-hidden rounded-default shadow-lg w-full dark:bg-base-800" x-on:click.outside="handleOutsideClick()">
+            <div class="flex flex-row items-center px-4 w-full">
+                <button type="submit" id="command-submit" class="group flex items-center focus:outline-hidden">
+                    <span class="block material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:hidden">
+                        search
+                    </span>
+
+                    <span class="hidden material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:block animate-spin">
+                        progress_activity
+                    </span>
+                </button>
+
+                <input
+                    autocomplete="off"
+                    type="search"
+                    placeholder="Gõ để tìm kiếm"
+                    class="font-medium grow px-2 py-4 placeholder-font-subtle-light text-font-default-light focus:outline-hidden dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                    name="s"
+                    id="search-input-command"
+                    x-ref="searchInputCommand"
+                    hx-indicator="#command-submit"
+                    x-on:keydown.escape.prevent="handleEscape()"
+                    x-on:keydown.arrow-down.prevent="nextItem()"
+                    x-on:keydown.arrow-up.prevent="prevItem()"
+                    x-on:keydown.enter.prevent="selectItem(true)"
+                    hx-get="/search/?extended=1"
+                    hx-trigger="keyup changed delay:500ms"
+                    hx-select="#command-results-list"
+                    hx-select-oob="#command-results-note"
+                    hx-target="#command-results">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    esc
+</kbd>
+
+            </div>
+
+            <div class="grow h-full overflow-auto w-full dark:border-base-700" data-simplebar x-on:htmx:after-swap="handleContentLoaded($event)" x-bind:class="{'border-t border-base-200': items !== undefined && items.length > 0}">
+                <div id="command-results"></div>
+
+                
+                    
+
+<div id="command-history" x-show="!hasResults">
+    <template x-if="commandHistory.length > 0">
+        <div class="">
+            <h3 class="border-b border-base-200 font-semibold text-font-important-light dark:text-font-important-dark dark:border-base-700 p-4">
+                Recent searches
+            </h3>
+
+            <ul>
+                <template x-for="(item, index) in commandHistory">
+                    <li class="border-b border-base-200 dark:border-base-700 last:border-b-0"
+                        x-bind:class="{'active': currentIndex === index + 1}"
+                        x-on:mouseenter="currentIndex = index + 1">
+                        <a class="block flex flex-row gap-4 items-center p-4 transition-colors"
+                           x-bind:data-title="item.title"
+                           x-bind:data-description="item.description"
+                           x-bind:href="item.link"
+                           x-bind:class="{'bg-base-50 dark:bg-white/[.04]': currentIndex === index + 1}">
+                            <span class="truncate">
+                                <span class="font-medium text-font-important-light dark:text-font-important-dark" x-text="item.title"></span>
+                                <span class="mx-1 opacity-50 group-[.active]:text-white">•</span>
+                                <span class="text-font-subtle-light dark:text-font-subtle-dark group-[.active]:text-white" x-text="item.description"></span>
+                            </span>
+
+                            <span class="flex flex-row items-center ml-auto">
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-primary-600 dark:hover:text-primary-500"
+                                      x-on:click="toggleFavorite($event, index);"
+                                      x-bind:class="{'text-primary-600 dark:text-primary-500': item.favorite}">
+                                    favorite
+                                </span>
+
+                                <span class="bg-base-200 h-6 w-px mx-3"></span>
+
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-base-500 dark:hover:text-base-400" x-on:click="removeFromHistory($event, index);">
+                                    close
+                                </span>
+                            </span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </template>
+
+    <template x-if="commandHistory.length === 0">
+        <div class="border-t border-base-200 px-4 py-8 dark:border-base-700">
+            <p class="text-lg text-center">
+                No recent searches
+            </p>
+        </div>
+    </template>
+</div>
+</div>
+
+                
+
+                <div id="command-results-note"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <script src="/static/unfold/js/simplebar/simplebar.js"></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"ea11a134e56d43daad6c73784d6e2c31","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

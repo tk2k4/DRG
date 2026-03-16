@@ -1,0 +1,2641 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="vi" dir="ltr"  x-data="{ adminTheme: $persist('auto').as('adminTheme') }" x-bind:class="{'dark': adminTheme === 'dark' || (adminTheme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)}" x-cloak>
+    <head>
+        <title> 
+Phân loại DRG
+</title>
+
+        <link href="/static/unfold/fonts/inter/styles.css" rel="stylesheet">
+        <link href="/static/unfold/fonts/material-symbols/styles.css" rel="stylesheet">
+
+        
+            <link href="/static/base/css/styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/btn-styles.css" rel="stylesheet">
+        
+            <link href="/static/base/css/loading.css" rel="stylesheet">
+        
+            <link href="/static/css/styles.css" rel="stylesheet">
+        
+
+        
+            <link rel="icon" href="/static/logo/logo.png" type="image/svg+xml" sizes="32x32">
+        
+
+        <link href="/static/unfold/css/styles.css" rel="stylesheet">
+        <link href="/static/unfold/css/simplebar/simplebar.css" rel="stylesheet">
+
+        <script src="/static/unfold/js/alpine/alpine.anchor.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.persist.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.sort.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.resize.js" defer></script>
+        <script src="/static/unfold/js/alpine/alpine.js" defer></script>
+        <script src="/static/unfold/js/htmx/htmx.js"></script>
+        <script src="/static/unfold/js/chart/chart.js"></script>
+
+        
+            <script src="/static/base/js/loading.js"></script>
+        
+            <script src="/static/base/js/whiteneuron.js"></script>
+        
+
+        
+    
+
+    <script src="/jsi18n/"></script>
+
+    <link href="/static/admin/css/vendor/select2/select2.css" media="screen" rel="stylesheet">
+<link href="/static/admin/css/autocomplete.css" media="screen" rel="stylesheet">
+
+    
+
+
+        
+
+    
+    
+    <script src="/static/admin/js/vendor/jquery/jquery.min.js"></script>
+<script src="/static/admin/js/calendar.js"></script>
+<script src="/static/admin/js/vendor/select2/select2.full.js"></script>
+<script src="/static/unfold/filters/js/DateTimeShortcuts.js"></script>
+<script src="/static/admin/js/jquery.init.js"></script>
+<script src="/static/admin/js/core.js"></script>
+<script src="/static/unfold/js/select2.init.js"></script>
+<script src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script src="/static/admin/js/actions.js"></script>
+<script src="/static/admin/js/urlify.js"></script>
+<script src="/static/admin/js/prepopulate.js"></script>
+<script src="/static/admin/js/vendor/xregexp/xregexp.min.js"></script>
+
+    <style type="text/css">
+        .grid_view .action_buttoms {
+            z-index: 1000;
+            position: absolute;
+            right: 2px;
+            bottom: 5px;
+        }
+    </style>
+    <link rel="stylesheet" href='/static/base/css/btn-styles.css'>
+    
+<script>
+    (function () {
+        const globalKey = "sidebarDesktopOpen";
+        const modelKey = "sidebarDesktopOpen_vietnamdrg_drgproxy";
+        // default theo ModelAdmin: True => '1', False => '0'
+        const defaultVal = '1';
+
+        // 1) MỖI LẦN load trang: luôn dùng default của model
+        let perModel = defaultVal;
+        localStorage.setItem(modelKey, perModel);
+        // ép luôn globalKey cho Unfold dùng
+        localStorage.setItem(globalKey, perModel);
+
+        // 2) Bọc localStorage.setItem để khi Unfold set globalKey, ta copy sang modelKey
+        const _setItem = localStorage.setItem.bind(localStorage);
+        localStorage.setItem = function (key, value) {
+            _setItem(key, value);
+            if (key === globalKey) {
+                _setItem(modelKey, value);
+            }
+        };
+
+        console.log("Sidebar override for vietnamdrg_drgproxy ->", perModel,
+                    "global:", localStorage.getItem(globalKey));
+    })();
+</script>
+
+
+
+
+<meta name="description" content="Phân loại DRG - Nhóm chẩn đoán liên quan">
+<meta name="keywords" content="DRG, Phân loại DRG, Nhóm chẩn đoán liên quan, ICD, Mã hóa y tế">
+<meta name="author" content="White Neuron">
+
+<style>
+    .mystyle {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        font-size: 0.875rem;
+        background-color: white;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    }
+
+    .dark .mystyle {
+        background-color: #1f2937;
+        color: #e5e7eb;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .mystyle thead {
+        background-color: #f3f4f6;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .dark .mystyle thead {
+        background-color: #374151;
+        border-bottom: 2px solid #4b5563;
+    }
+
+    .mystyle th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        color: #374151;
+        letter-spacing: 0.05em;
+    }
+
+    .dark .mystyle th {
+        color: #e5e7eb;
+    }
+
+    .mystyle td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #1f2937;
+    }
+
+    .dark .mystyle td {
+        border-bottom: 1px solid #374151;
+        color: #d1d5db;
+    }
+
+    .mystyle tr:last-child td {
+        border-bottom: none;
+    }
+
+    .mystyle tr:hover {
+        background-color: #f9fafb;
+    }
+
+    .dark .mystyle tr:hover {
+        background-color: #374151;
+    }
+
+    .mystyle b[style="color:red"] {
+        color: #ef4444 !important;
+        font-weight: bold;
+    }
+
+    .dark .mystyle b[style="color:red"] {
+        color: #f87171 !important;
+    }
+
+    .mystyle b[style="color:orange"] {
+        color: #f59e0b !important;
+        font-weight: bold;
+    }
+
+    .dark .mystyle b[style="color:orange"] {
+        color: #fbbf24 !important;
+    }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajaxSetup({
+            headers: { "X-CSRFToken": "v0roALqLXhGwWCRYGAsZW6pCNbue2DwWKnhQT5marvuTOapudoGaxovMjk80DUrJ" },
+        });
+
+        // Tự xác định ngôn ngữ từ thuộc tính lang của <html> (lang="vi" hoặc lang="en")
+        function getDocLang() {
+            var L = (document.documentElement.getAttribute('lang') || document.documentElement.lang || 'vi').toLowerCase();
+            return (L === 'en') ? 'en' : 'vi';
+        }
+        function getLang() {
+            var fromSelect = $("#lang").val();
+            if (fromSelect === 'en' || fromSelect === 'vi') return fromSelect;
+            return getDocLang();
+        }
+        // Đồng bộ dropdown với ngôn ngữ trang khi load
+        var initialLang = getDocLang();
+        if ($("#lang").length) $("#lang").val(initialLang);
+
+        $("#select-patient").change(function () {
+            $("#result").html("");
+            $.ajax({
+                method: "POST",
+                url: "/vietnamdrg/get_patient/",
+                data: {
+                    id: $("#select-patient").val(),
+                    lang: getLang(),
+                },
+                success: function (response) {
+                    if (response["alert"] == "success") {
+                        $("#id").val(response["id"]);
+                        $("#sex").val(response["sex"]);
+                        $("#age").val(response["age"]);
+                        $("#disc").val(response["disc"]);
+                        $("#admwt").val(response["admwt"]);
+                        $("#losd").val(response["losd"]);
+                        $("#loshr").val(response["loshr"]);
+                        $("#pdx").val(response["pdx"]);
+                        $("#sdxs").val(response["sdxs"]);
+                        $("#procs").val(response["procs"]);
+
+                        $("#desc-sex").text(response["desc-sex"] || '-');
+                        $("#desc-age").text(response["desc-age"] || '-');
+                        $("#desc-admwt").text(response["desc-admwt"] || '-');
+                        $("#desc-disc").text(response["desc-disc"] || '-');
+                        $("#desc-los").text(response["desc-los"] || '-');
+
+                        $("#desc-dx").html(response["desc-dx"]);
+                        $("#desc-proc").html(response["desc-proc"]);
+                    }
+                },
+                error: function (response) {
+                    alert(response["responseJSON"]["error"] || "Lỗi khi tải dữ liệu bệnh nhân");
+                },
+            });
+        });
+
+        $("#disease-form").on("input", function (e) {
+            $("#result").html("");
+
+            $.ajax({
+                method: "post",
+                url: "/vietnamdrg/desc_disease/",
+                data: {
+                    lang: getLang(),
+                    sex: $("#sex").val(),
+                    age: $("#age").val(),
+                    age_unit: $("#age-unit").val(),
+                    disc: $("#disc").val(),
+                    admwt: $("#admwt").val(),
+                    losd: $("#losd").val(),
+                    loshr: $("#loshr").val(),
+                    pdx: $("#pdx").val(),
+                    sdxs: $("#sdxs").val(),
+                    procs: $("#procs").val(),
+                },
+                success: function (response) {
+                    $("#desc-sex").text(response["sex"]);
+                    $("#desc-age").text(response["age"]);
+                    $("#desc-admwt").text(response["admwt"]);
+                    $("#desc-disc").text(response["disc"]);
+                    $("#desc-los").text(response["los"]);
+                    $("#desc-dx").html(response["dx"]);
+                    $("#desc-proc").html(response["proc"]);
+                },
+                error: function (response) {
+                    console.log(response);
+                },
+            });
+        });
+
+        $("#buttonClear").click(function (e) {
+            e.preventDefault();
+            $("#select-patient").val("---");
+            $('#disease-form')[0].reset();
+            $("#sex").val("n");
+            $("#disc").val("1");
+            $("#age-unit").val("y");
+
+            $("#desc-sex, #desc-age, #desc-admwt, #desc-disc, #desc-los, #desc-dx, #desc-proc, #explain, #result").empty();
+        });
+
+        $("#buttonSave").click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                method: "post",
+                url: "/vietnamdrg/save_patient/",
+                data: {
+                    token: "",
+                    lang: getLang(),
+                    id: $("#id").val(),
+                    sex: $("#sex").val(),
+                    age: $("#age").val(),
+                    age_unit: $("#age-unit").val(),
+                    disc: $("#disc").val(),
+                    admwt: $("#admwt").val(),
+                    losd: $("#losd").val(),
+                    loshr: $("#loshr").val(),
+                    pdx: $("#pdx").val(),
+                    sdxs: $("#sdxs").val(),
+                    procs: $("#procs").val(),
+                },
+                success: function (response) {
+                    alert(response["alert"]);
+                },
+                error: function (response) {
+                    alert(response["responseJSON"]["error"]);
+                },
+            });
+        });
+
+        $("#buttonRun").click(function (e) {
+            e.preventDefault();
+            $("#explain").html('<div class="animate-pulse">Đang xử lý...</div>');
+            $("#result").html('');
+
+            $.ajax({
+                method: "post",
+                url: "/vietnamdrg/run/",
+                data: {
+                    lang: getLang(),
+                    sex: $("#sex").val(),
+                    age: $("#age").val(),
+                    age_unit: $("#age-unit").val(),
+                    disc: $("#disc").val(),
+                    admwt: $("#admwt").val(),
+                    losd: $("#losd").val(),
+                    loshr: $("#loshr").val(),
+                    pdx: $("#pdx").val(),
+                    sdxs: $("#sdxs").val(),
+                    procs: $("#procs").val(),
+                },
+                success: function (response) {
+                    if ("explain" in response) {
+                        $("#explain").html(response["explain"]);
+                        $("#result").html(response["result"]);
+                    } else {
+                        $("#explain").html('');
+                        alert(response["alert"]);
+                    }
+                },
+                error: function (response) {
+                    $("#explain").html('');
+                    alert(response["responseJSON"]["error"]);
+                },
+            });
+        });
+    });
+</script>
+
+
+        <script src="/static/unfold/js/app.js"></script>
+
+        
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+
+        
+            <meta name="robots" content="NONE,NOARCHIVE">
+        
+    </head>
+
+    <body class="antialiased bg-base-50 font-sans text-font-default-light text-sm dark:bg-base-900 dark:text-font-default-dark  app-vietnamdrg model-drgproxy change-list" data-admin-utc-offset="25200"
+          x-data="{
+                  activeTab: 'general',
+                  sidebarMobileOpen: false,
+                  sidebarDesktopOpen: (localStorage.getItem('sidebarDesktopOpen') !== null) ? (localStorage.getItem('sidebarDesktopOpen') == '1') : true
+                  }"
+          x-init="
+                  activeTab = getCurrentTab() || 'general';
+                  $watch('sidebarDesktopOpen', value => localStorage.setItem('sidebarDesktopOpen', value ? '1' : '0'));
+                 "
+    >
+        
+            <style id="unfold-theme-colors">
+                :root {
+                    
+                        --border-radius: 6px;
+                    
+
+                    
+                        
+                            --color-base-50: rgb(249, 250, 251);
+                        
+                            --color-base-100: rgb(243, 244, 246);
+                        
+                            --color-base-200: rgb(229, 231, 235);
+                        
+                            --color-base-300: rgb(209, 213, 219);
+                        
+                            --color-base-400: rgb(156, 163, 175);
+                        
+                            --color-base-500: rgb(107, 114, 128);
+                        
+                            --color-base-600: rgb(75, 85, 99);
+                        
+                            --color-base-700: rgb(55, 65, 81);
+                        
+                            --color-base-800: rgb(31, 41, 55);
+                        
+                            --color-base-900: rgb(17, 24, 39);
+                        
+                            --color-base-950: rgb(3, 7, 18);
+                        
+                    
+                        
+                            --color-primary-50: rgb(240, 249, 255);
+                        
+                            --color-primary-100: rgb(224, 242, 254);
+                        
+                            --color-primary-200: rgb(186, 230, 253);
+                        
+                            --color-primary-300: rgb(125, 211, 252);
+                        
+                            --color-primary-400: rgb(56, 189, 248);
+                        
+                            --color-primary-500: rgb(14, 165, 233);
+                        
+                            --color-primary-600: rgb(2, 132, 199);
+                        
+                            --color-primary-700: rgb(3, 105, 161);
+                        
+                            --color-primary-800: rgb(7, 89, 133);
+                        
+                            --color-primary-900: rgb(12, 74, 110);
+                        
+                            --color-primary-950: rgb(8, 47, 73);
+                        
+                    
+                        
+                            --color-font-subtle-light: rgb(107, 114, 128);
+                        
+                            --color-font-subtle-dark: rgb(156, 163, 175);
+                        
+                            --color-font-default-light: rgb(75, 85, 99);
+                        
+                            --color-font-default-dark: rgb(209, 213, 219);
+                        
+                            --color-font-important-light: rgb(17, 24, 39);
+                        
+                            --color-font-important-dark: rgb(243, 244, 246);
+                        
+                    
+                }
+            </style>
+        
+
+        
+    <!-- Overlay loading -->
+    <div id="loading-overlay" display="flex">
+        <img src="/static/base/images/loading.gif" alt="Loading...">
+    </div>
+
+    <!-- toast -->
+    <div class="ui-toast ui-toast-top ui-toast-end z-50" id="toast-container">
+    </div>
+    
+    <div id="page" class="flex max-w-full min-h-screen ">
+        
+            
+                
+
+<div class="relative z-60">
+    <div class="fixed hidden xl:relative xl:block w-[288px] " x-bind:class="{'xl:hidden!': !sidebarDesktopOpen, 'block!': sidebarMobileOpen}">
+        <div class="bg-base-50 relative z-30 dark:bg-base-900">
+            <div id="nav-sidebar" class="bg-base-50 border-r border-base-200 bottom-0 fixed max-h-screen top-0 w-[288px] dark:border-base-800 dark:bg-base-900 ">
+                
+                    
+
+<nav id="nav-sidebar-inner" class="bg-base-50 flex flex-col min-h-screen dark:text-font-default-dark dark:bg-base-950/20 ">
+    
+
+<div class="border-b border-base-200 flex gap-3 items-center h-[65px] mb-6 dark:border-base-800 px-3 " x-data="{ openDropdown: false }">
+    <div class="bg-transparent flex font-semibold gap-3 grow min-w-0 h-[64px] items-center px-3 cursor-pointer transition-all -mx-3 px-6 hover:bg-base-100 dark:hover:bg-white/[.06]"
+         
+             x-on:click="openDropdown = !openDropdown"
+             x-bind:class="{'bg-base-100 dark:bg-white/[.06]': openDropdown, 'bg-transparent': !openDropdown}"
+         
+    >
+        
+            
+
+
+    <div class="shrink-0">
+        <span>
+        
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="h-[38px] hidden dark:block"/>
+
+            <img src="/static/logo/logo.png" alt="Trang chủ" class="block h-[38px] dark:hidden" />
+        
+    </span>
+    </div>
+
+
+<div class="flex flex-col grow justify-center min-w-0">
+    <div class="text-important tracking-tight *:truncate xl:text-sm">
+        
+    <div id="site-name">
+    
+        DRG-VN
+    
+</div>
+
+
+    </div>
+
+    
+        <div class="font-normal text-subtle text-xs truncate">
+            Trang quản trị
+        </div>
+    
+</div>
+
+        
+
+        
+            <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+                unfold_more
+            </span>
+        
+    </div>
+
+    <span class="material-symbols-outlined block cursor-pointer h-[18px] xl:hidden! hover:text-base-700 dark:hover:text-base-200" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+        close
+    </span>
+
+    
+
+
+    <div class="absolute bg-white border border-base-200 flex flex-col left-3 py-1 rounded-default shadow-lg top-[73px] w-[264px] z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openDropdown" x-transition x-on:click.outside="openDropdown = false">
+        
+            <a href="https://whiteneuron.com/" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark" 
+>
+                
+                    <span class="material-symbols-outlined">
+                        diamond
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Công ty TNHH White Neuron
+                </span>
+            </a>
+        
+            <a href="/cdn-cgi/l/email-protection#1f7e7177716b5f6877766b7a717a6a6d7071317c7072" class="flex flex-row items-center gap-3 max-h-[30px] mx-1 px-2 py-2 rounded-default text-font-default-light dark:text-font-default-dark hover:bg-base-100 hover:text-font-important-light dark:hover:bg-base-700 dark:hover:text-font-important-dark">
+                
+                    <span class="material-symbols-outlined">
+                        rocket_launch
+                    </span>
+                
+
+                <span class="grow truncate">
+                    Email: <span class="__cf_email__" data-cfemail="2746494f495367504f4e53424942525548490944484a">[email&#160;protected]</span>
+                </span>
+            </a>
+        
+    </div>
+
+
+</div>
+
+
+    
+
+
+    
+        <div class="mb-2.5 mx-3 relative" x-data="searchDropdown()" x-on:keydown.window="applyShortcut($event)" x-on:click.outside="openSearchResults = false">
+            <div class="bg-white border border-base-200 flex flex-row items-center px-3 rounded-default relative shadow-xs w-full focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-primary-600 dark:bg-base-900 dark:border-base-700">
+                <span class="material-symbols-outlined md-18 text-base-400">manage_search</span>
+
+                <input type="search"
+                       id="nav-filter"
+                       name="s"
+                       x-ref="searchInput"
+                       x-on:focus="openSearchResults = true; currentIndex = 0"
+                       x-on:keydown="openSearchResults = true;"
+                       x-on:keydown.arrow-down.prevent="nextItem()"
+                       x-on:keydown.arrow-up.prevent="prevItem()"
+                       x-on:keydown.escape.prevent="openSearchResults = false; if ($refs.searchInput.value === '') { $refs.searchInput.blur() } else { $refs.searchInput.value = '' }"
+                       x-on:keydown.enter.prevent="selectItem()"
+                       x-on:search="currentIndex = 0"
+                       hx-get="/search/"
+                       hx-trigger="keyup changed delay:500ms"
+                       hx-target="#search-results"
+                       class="grow font-medium min-w-0 overflow-hidden p-2 placeholder-font-subtle-light truncate focus:outline-hidden dark:bg-base-900 dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                       placeholder="Search apps and models..."
+                       aria-label="Filter navigation items">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    t
+</kbd>
+
+            </div>
+
+            <div id="search-results" x-show="openSearchResults"></div>
+        </div>
+    
+
+
+
+    
+        
+
+
+    <div id="nav-sidebar-apps" class="h-0 grow overflow-auto" data-simplebar>
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Công cụ
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/drgproxy/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 bg-base-100 font-semibold text-primary-600 dark:bg-white/[.06] dark:text-primary-500 active">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                home
+                                            </span>
+                                        
+
+                                        <span>Phân loại DRG</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/importdrgproxy/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                home
+                                            </span>
+                                        
+
+                                        <span>Import Excel DRG</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Điều hướng
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/base/app/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                dashboard
+                                            </span>
+                                        
+
+                                        <span>Bảng điều khiển</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notification/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notifications
+                                            </span>
+                                        
+
+                                        <span>Thông báo</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/feedbacks/feedbackdata/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                feedback
+                                            </span>
+                                        
+
+                                        <span>Phản hồi</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            DRG Thái Lan
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>DC (Nhóm chẩn đoán)</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>DRG</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_i10/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                medical_services
+                                            </span>
+                                        
+
+                                        <span>Dữ liệu ICD-10</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_ax/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                category
+                                            </span>
+                                        
+
+                                        <span>Nhóm giải phẫu</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_proc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                healing
+                                            </span>
+                                        
+
+                                        <span>Thủ thuật</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_prpdc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                alt_route
+                                            </span>
+                                        
+
+                                        <span>Ánh xạ Thủ thuật-PDC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_ccex/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                block
+                                            </span>
+                                        
+
+                                        <span>Loại trừ CC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/thailandrg/tdrg_cclm/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                grid_on
+                                            </span>
+                                        
+
+                                        <span>Ma trận nhãn CC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            DRG Việt Nam
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/vndc/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder_open
+                                            </span>
+                                        
+
+                                        <span>VNDC</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/vndrg/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                folder
+                                            </span>
+                                        
+
+                                        <span>VNDRG</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" >
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark " >
+                            Dữ liệu bệnh nhân
+
+                            
+
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" >
+                        
+                            
+                                <li>
+                                    <a href="/vietnamdrg/patient/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                person
+                                            </span>
+                                        
+
+                                        <span>Bệnh nhân</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Người dùng &amp; Nhóm
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/user/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                person
+                                            </span>
+                                        
+
+                                        <span>Người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/useractivity/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                history
+                                            </span>
+                                        
+
+                                        <span>Hoạt động người dùng</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            41
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/auth/group/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                group
+                                            </span>
+                                        
+
+                                        <span>Nhóm</span>
+
+                                        
+    <span class="font-semibold h-[18px] leading-[18px] 
+    
+    hidden 
+    
+    
+    ml-2 px-1 relative rounded-xs text-center text-[11px] whitespace-nowrap uppercase min-w-[18px]
+                 
+                 
+                     
+                         bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400
+                     
+                 
+                ">
+        
+        <!-- nếu mà > 0 thì thêm dấu + -->
+            
+            0
+        
+    </span>
+
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+            
+                
+
+                <div class="hidden mb-1.5 has-[ol]:has-[li]:block" x-data="{navigationOpen: false}">
+                    
+
+                    
+                        <h2 class="font-semibold flex flex-row group items-center mb-1 mx-3 py-1.5 px-3 select-none text-font-important-light text-sm dark:text-font-important-dark cursor-pointer hover:text-primary-600 dark:hover:text-primary-500" x-on:click="navigationOpen = !navigationOpen">
+                            Hệ thống
+
+                            
+
+                            
+                                <span class="material-symbols-outlined ml-auto transition-all group-hover:text-primary-600 dark:group-hover:text-primary-500" x-bind:class="{'rotate-90': navigationOpen}">
+                                    chevron_right
+                                </span>
+                            
+                        </h2>
+                    
+
+                    <ol class="flex flex-col gap-0.5 px-6" x-show="navigationOpen">
+                        
+                            
+                                <li>
+                                    <a href="/base/image/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                image
+                                            </span>
+                                        
+
+                                        <span>Hình ảnh</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/base/mail/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                email
+                                            </span>
+                                        
+
+                                        <span>Email</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                            
+                                <li>
+                                    <a href="/notification/notificationconfig/" class="flex h-[38px] items-center -mx-3 px-3 rounded-default hover:text-primary-600 dark:hover:text-primary-500 ">
+                                        
+                                            <span class="material-symbols-outlined md-18 mr-3 w-[18px]">
+                                                notification_important
+                                            </span>
+                                        
+
+                                        <span>Cấu hình thông báo</span>
+
+                                        
+                                    </a>
+                                </li>
+                            
+                        
+                    </ol>
+                </div>
+            
+        
+    </div>
+
+    
+
+
+    
+
+    <div class="border-t border-base-200 px-6 py-3 relative dark:border-base-800" x-data="{ openUserLinks: false }">
+    <nav class="absolute bg-white border border-base-200 flex flex-col leading-none py-1 rounded-default shadow-lg bottom-[73px] left-3 right-3 z-50 dark:bg-base-800 dark:border-base-700" x-cloak x-show="openUserLinks" x-transition x-on:click.outside="openUserLinks = false">
+        
+
+
+    <div class="border-b border-base-200 flex flex-row gap-1 mb-1 pb-1 px-2 dark:border-base-700">
+        <a class="cursor-pointer flex flex-row grow px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'light'"
+           x-bind:class="adminTheme == 'light'  && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">light_mode</span>
+            <span class="leading-none self-center">Light</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow leading-none -ml-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'dark'"
+           x-bind:class="adminTheme == 'dark' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">dark_mode</span>
+            <span class="leading-none self-center">Dark</span>
+        </a>
+
+        <a class="cursor-pointer flex flex-row grow -mr-1 px-2 py-1.5 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200"
+           x-on:click="adminTheme = 'auto'"
+           x-bind:class="adminTheme == 'auto' && 'text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!'">
+            <span class="material-symbols-outlined mr-2">computer</span>
+            <span class="leading-none self-center">Hệ thống</span>
+        </a>
+    </div>
+
+
+
+        
+
+
+
+
+
+
+    
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="v0roALqLXhGwWCRYGAsZW6pCNbue2DwWKnhQT5marvuTOapudoGaxovMjk80DUrJ">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="vi">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 text-primary-600 dark:text-primary-500 dark:hover:text-primary-500! hover:text-primary-600!">
+        
+
+        Tiếng Việt <span class="ml-auto uppercase font-semibold text-xs text-subtle">vi</span>
+    </button>
+</form>
+
+        
+            <form action="/i18n/setlang/" method="post" class="flex w-full">
+    <input type="hidden" name="csrfmiddlewaretoken" value="v0roALqLXhGwWCRYGAsZW6pCNbue2DwWKnhQT5marvuTOapudoGaxovMjk80DUrJ">
+
+    <input name="next" type="hidden" value="">
+    <input name="language" type="hidden" value="en">
+
+    <button type="submit" class="block cursor-pointer flex flex-row grow items-center gap-1 mx-1 px-3 py-2 rounded-default text-left hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 ">
+        
+
+        English <span class="ml-auto uppercase font-semibold text-xs text-subtle">en</span>
+    </button>
+</form>
+
+        
+    
+
+    <div class="border-t border-base-200 mt-1 pt-1 dark:border-base-700"></div>
+
+
+
+        
+
+        
+
+<div x-data="{ openUserLinks: false }">
+    <div class="flex items-center justify-center">
+        <a class="flex items-center justify-center cursor-pointer h-8 w-8 hover:text-base-700 dark:hover:text-base-200" @click="openUserLinks = true">
+            
+                <span class="material-symbols-outlined">person</span>
+            
+        </a>
+    </div>
+
+    <!-- Dialog Overlay -->
+    <div 
+        x-show="openUserLinks"
+        x-cloak
+        x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+        @click.self="openUserLinks = false"
+        @keydown.escape.window="openUserLinks = false"
+    >
+        <!-- Dialog Content -->
+        <div 
+            x-show="openUserLinks"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-white dark:bg-base-800 rounded-lg shadow-xl w-full max-w-sm border border-base-200 dark:border-base-700"
+        >
+            <!-- Header -->
+            <div class="border-b border-base-200 dark:border-base-700 px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    
+                        <span class="material-symbols-outlined text-4xl">person</span>
+                    
+                    <span class="font-medium text-base-900 dark:text-base-100">
+                        admin
+                    </span>
+                </div>
+                <button 
+                    @click="openUserLinks = false"
+                    class="text-base-500 hover:text-base-700 dark:text-base-400 dark:hover:text-base-200"
+                >
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Menu Items -->
+            <nav class="flex flex-col py-2">
+                
+                <a 
+                    href="/base/userprofile/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    Hồ sơ người dùng
+                </a>
+                
+                
+                
+                <a 
+                    href="/" 
+                    target="_blank" 
+                    class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                    @click="openUserLinks = false"
+                >
+                    <span class="material-symbols-outlined text-lg">open_in_new</span>
+                    Xem trang
+                </a>
+                
+
+                
+                    
+                        <a 
+                            href="/password_change/" 
+                            class="mx-2 px-3 py-2 rounded-default hover:bg-base-100 hover:text-base-700 dark:hover:bg-base-700 dark:hover:text-base-200 flex items-center gap-2"
+                            @click="openUserLinks = false"
+                        >
+                            <span class="material-symbols-outlined text-lg">lock</span>
+                            Đổi mật khẩu
+                        </a>
+                    
+                
+
+                <!-- Logout -->
+                <div class="border-t border-base-200 dark:border-base-700 mt-2 pt-2">
+                    <form id="logout-form" method="post" action="/logout/" class="mx-2">
+                        <input type="hidden" name="csrfmiddlewaretoken" value="v0roALqLXhGwWCRYGAsZW6pCNbue2DwWKnhQT5marvuTOapudoGaxovMjk80DUrJ">
+                        <button 
+                            type="submit" 
+                            class="bg-none block cursor-pointer px-3 py-2 text-left text-red-500 rounded-default w-full hover:bg-red-100 dark:hover:bg-red-500/20 dark:hover:text-red-500 flex items-center gap-2"
+                            onclick="document.cookie='skip_auto_guest=1; path=/; max-age=31536000';"
+                        >
+                            <span class="material-symbols-outlined text-lg">logout</span>
+                            Đăng xuất
+                        </button>
+                    </form>
+                </div>
+            </nav>
+        </div>
+    </div>
+</div>
+    </nav>
+
+    <div class="cursor-pointer flex flex-row gap-3 items-center min-h-[64px] -mx-6 -my-3 px-6 py-3 hover:bg-base-100 dark:hover:bg-base-800" x-on:click="openUserLinks = !openUserLinks" x-bind:class="{'bg-base-100 dark:bg-base-800': openUserLinks}">
+        
+            <div class="bg-white bg-cover h-[38px] flex items-center justify-center rounded-default select-none shadow min-w-[38px] w-[38px] dark:bg-base-700">
+                <span class="material-symbols-outlined text-base-400">person</span>
+            </div>
+        
+        <div class="flex flex-col select-none min-w-0">
+            <div class="font-semibold text-important tracking-tight truncate">
+                admin
+            </div>
+
+            
+                <div class="font-normal text-subtle text-xs truncate">
+                    <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="98f6ecf9f6f0ecf5d8fff5f9f1f4b6fbf7f5">[email&#160;protected]</a>
+                </div>
+            
+        </div>
+
+        <span class="material-symbols-outlined ml-auto select-none text-font-default-light dark:text-font-default-dark">
+            unfold_more
+        </span>
+    </div>
+</div>
+</nav>
+
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+        
+
+        <div id="main" class="bg-white flex flex-col grow min-w-0 dark:bg-base-900 ">
+            
+
+
+    <div class="bg-white border-b border-base-200 mb-6 px-4 z-40 dark:bg-base-900 dark:border-base-800 dark:text-font-default-dark ">
+        <div class=" flex items-center h-16 mx-auto py-4">
+            <div id="header-inner" class="flex items-center relative w-full">
+                <div class="flex items-center w-full">
+                    
+                        
+                            
+                                
+
+<div class="flex flex-row grow font-semibold items-center min-w-0 mr-3">
+    
+        <span class="cursor-pointer flex flex-row items-center">
+            <span class="material-symbols-outlined hidden! xl:block!" x-on:click="sidebarDesktopOpen = !sidebarDesktopOpen; localStorage.setItem('sidebarDesktopOpen', sidebarDesktopOpen ? '1' : '0');">
+                dock_to_right
+            </span>
+
+            <span class="material-symbols-outlined block! xl:hidden!" x-on:click="sidebarMobileOpen = !sidebarMobileOpen">
+                dock_to_right
+            </span>
+        </span>
+
+        <span class="block bg-base-200 h-5 mx-3 w-px dark:bg-base-700"></span>
+    
+
+    
+
+
+    
+
+
+
+    <h1 class="overflow-hidden leading-5 text-ellipsis text-font-important-light whitespace-nowrap xl:text-base dark:text-font-important-dark">
+        <a href="/vietnamdrg/" class="align-middle inline-block leading-5 tracking-tight">
+        DRG Việt Nam
+        </a ><span class="material-symbols-outlined inline-block align-middle leading-5 mx-2 text-base-400 dark:text-base-500">chevron_right</span><a href="/vietnamdrg/drgproxy/" class="align-middle inline-block leading-5 tracking-tight">
+        Phân loại DRG
+        </a >
+
+
+        
+    </h1>
+</div>
+
+                            
+
+                            
+                                
+
+<div class="flex flex-row gap-4 items-center ml-auto">
+    
+        <span class="inline-block font-semibold h-6 leading-6 px-2 rounded-default text-[11px] uppercase whitespace-nowrap
+             
+                 bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400
+             "  title="Chọn Phân loại DRG để xem">
+    Vận hành (Production)
+</span>
+
+    
+
+    
+
+
+
+
+    
+        
+    
+        
+            
+    
+
+
+        
+    
+
+    
+</div>
+
+                            
+                        
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+            
+                <div class="px-4">
+                    <div class=" mx-auto">
+                        
+
+                    </div>
+                </div>
+            
+
+            <div class="@container px-4 pb-4 grow">
+                <div id="content" class=" mx-auto ">
+                    
+                        
+
+                    
+
+                    
+<div class="bg-gray-100 dark:bg-gray-700 min-h-screen font-sans">
+    <header class="sticky top-0 bg-gray-100 dark:bg-gray-700 shadow-sm z-20 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold tracking-tight dark:text-white">Phân loại DRG</h1>
+
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <div class="lg:col-span-5 space-y-6">
+
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+            <label class="block text-sm font-medium mb-2 dark:text-white">Language</label>
+            <div class="relative dark:bg-gray-700 mb-4">
+                <select name="lang" id="lang"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="vi">Tiếng Việt</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+            <label class="block text-sm font-medium mb-2 dark:text-white">Chọn bệnh án có sẵn:</label>
+            <div class="relative dark:bg-gray-700">
+                <select name="select-patient" id="select-patient"
+                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 px-3 border">
+                    
+                    <option value="---" class="dark:bg-gray-700">---</option>
+                    
+                    <option value="TS-00-01" class="dark:bg-gray-700">TS-00-01</option>
+                    
+                    <option value="TS-00-02" class="dark:bg-gray-700">TS-00-02</option>
+                    
+                    <option value="TS-00-03" class="dark:bg-gray-700">TS-00-03</option>
+                    
+                    <option value="TS-00-04" class="dark:bg-gray-700">TS-00-04</option>
+                    
+                    <option value="TS-00-05" class="dark:bg-gray-700">TS-00-05</option>
+                    
+                    <option value="TS-00-06" class="dark:bg-gray-700">TS-00-06</option>
+                    
+                    <option value="TS-00-07" class="dark:bg-gray-700">TS-00-07</option>
+                    
+                    <option value="TS-00-08" class="dark:bg-gray-700">TS-00-08</option>
+                    
+                    <option value="TS-00-09" class="dark:bg-gray-700">TS-00-09</option>
+                    
+                    <option value="TS-00-10" class="dark:bg-gray-700">TS-00-10</option>
+                    
+                    <option value="TS-00-11" class="dark:bg-gray-700">TS-00-11</option>
+                    
+                    <option value="TS-01-01" class="dark:bg-gray-700">TS-01-01</option>
+                    
+                    <option value="TS-01-02" class="dark:bg-gray-700">TS-01-02</option>
+                    
+                    <option value="TS-01-03" class="dark:bg-gray-700">TS-01-03</option>
+                    
+                    <option value="TS-01-04" class="dark:bg-gray-700">TS-01-04</option>
+                    
+                    <option value="TS-01-05" class="dark:bg-gray-700">TS-01-05</option>
+                    
+                    <option value="TS-01-06" class="dark:bg-gray-700">TS-01-06</option>
+                    
+                    <option value="TS-01-07" class="dark:bg-gray-700">TS-01-07</option>
+                    
+                    <option value="TS-01-08" class="dark:bg-gray-700">TS-01-08</option>
+                    
+                    <option value="TS-01-09" class="dark:bg-gray-700">TS-01-09</option>
+                    
+                    <option value="TS-01-10" class="dark:bg-gray-700">TS-01-10</option>
+                    
+                    <option value="TS-01-11A" class="dark:bg-gray-700">TS-01-11A</option>
+                    
+                    <option value="TS-01-11B" class="dark:bg-gray-700">TS-01-11B</option>
+                    
+                    <option value="TS-01-12" class="dark:bg-gray-700">TS-01-12</option>
+                    
+                    <option value="TS-01-13" class="dark:bg-gray-700">TS-01-13</option>
+                    
+                    <option value="TS-02-01" class="dark:bg-gray-700">TS-02-01</option>
+                    
+                    <option value="TS-02-02" class="dark:bg-gray-700">TS-02-02</option>
+                    
+                    <option value="TS-02-03" class="dark:bg-gray-700">TS-02-03</option>
+                    
+                    <option value="TS-02-04" class="dark:bg-gray-700">TS-02-04</option>
+                    
+                    <option value="TS-02-05" class="dark:bg-gray-700">TS-02-05</option>
+                    
+                    <option value="TS-02-06" class="dark:bg-gray-700">TS-02-06</option>
+                    
+                    <option value="TS-02-07" class="dark:bg-gray-700">TS-02-07</option>
+                    
+                    <option value="TS-02-08" class="dark:bg-gray-700">TS-02-08</option>
+                    
+                    <option value="TS-02-09" class="dark:bg-gray-700">TS-02-09</option>
+                    
+                    <option value="TS-02-10" class="dark:bg-gray-700">TS-02-10</option>
+                    
+                    <option value="TS-03-01" class="dark:bg-gray-700">TS-03-01</option>
+                    
+                    <option value="TS-03-02" class="dark:bg-gray-700">TS-03-02</option>
+                    
+                    <option value="TS-03-03" class="dark:bg-gray-700">TS-03-03</option>
+                    
+                    <option value="TS-03-04" class="dark:bg-gray-700">TS-03-04</option>
+                    
+                    <option value="TS-03-05" class="dark:bg-gray-700">TS-03-05</option>
+                    
+                    <option value="TS-03-06" class="dark:bg-gray-700">TS-03-06</option>
+                    
+                    <option value="TS-03-07" class="dark:bg-gray-700">TS-03-07</option>
+                    
+                    <option value="TS-03-08" class="dark:bg-gray-700">TS-03-08</option>
+                    
+                    <option value="TS-03-09" class="dark:bg-gray-700">TS-03-09</option>
+                    
+                    <option value="TS-03-10" class="dark:bg-gray-700">TS-03-10</option>
+                    
+                    <option value="TS-03-11" class="dark:bg-gray-700">TS-03-11</option>
+                    
+                    <option value="TS-03-12" class="dark:bg-gray-700">TS-03-12</option>
+                    
+                    <option value="TS-04-01" class="dark:bg-gray-700">TS-04-01</option>
+                    
+                    <option value="TS-04-02" class="dark:bg-gray-700">TS-04-02</option>
+                    
+                    <option value="TS-04-03" class="dark:bg-gray-700">TS-04-03</option>
+                    
+                    <option value="TS-04-04" class="dark:bg-gray-700">TS-04-04</option>
+                    
+                    <option value="TS-04-05" class="dark:bg-gray-700">TS-04-05</option>
+                    
+                    <option value="TS-04-06" class="dark:bg-gray-700">TS-04-06</option>
+                    
+                    <option value="TS-04-07" class="dark:bg-gray-700">TS-04-07</option>
+                    
+                    <option value="TS-04-08" class="dark:bg-gray-700">TS-04-08</option>
+                    
+                    <option value="TS-04-09" class="dark:bg-gray-700">TS-04-09</option>
+                    
+                    <option value="TS-04-10" class="dark:bg-gray-700">TS-04-10</option>
+                    
+                    <option value="TS-04-11" class="dark:bg-gray-700">TS-04-11</option>
+                    
+                    <option value="TS-04-12" class="dark:bg-gray-700">TS-04-12</option>
+                    
+                    <option value="TS-05-01" class="dark:bg-gray-700">TS-05-01</option>
+                    
+                    <option value="TS-05-02" class="dark:bg-gray-700">TS-05-02</option>
+                    
+                    <option value="TS-05-03" class="dark:bg-gray-700">TS-05-03</option>
+                    
+                    <option value="TS-05-04" class="dark:bg-gray-700">TS-05-04</option>
+                    
+                    <option value="TS-05-05" class="dark:bg-gray-700">TS-05-05</option>
+                    
+                    <option value="TS-05-06" class="dark:bg-gray-700">TS-05-06</option>
+                    
+                    <option value="TS-05-07" class="dark:bg-gray-700">TS-05-07</option>
+                    
+                    <option value="TS-05-08" class="dark:bg-gray-700">TS-05-08</option>
+                    
+                    <option value="TS-05-09" class="dark:bg-gray-700">TS-05-09</option>
+                    
+                    <option value="TS-06-01" class="dark:bg-gray-700">TS-06-01</option>
+                    
+                    <option value="TS-06-02" class="dark:bg-gray-700">TS-06-02</option>
+                    
+                    <option value="TS-06-03A" class="dark:bg-gray-700">TS-06-03A</option>
+                    
+                    <option value="TS-06-03B" class="dark:bg-gray-700">TS-06-03B</option>
+                    
+                    <option value="TS-06-04A" class="dark:bg-gray-700">TS-06-04A</option>
+                    
+                    <option value="TS-06-04B" class="dark:bg-gray-700">TS-06-04B</option>
+                    
+                    <option value="TS-06-05" class="dark:bg-gray-700">TS-06-05</option>
+                    
+                    <option value="TS-06-06" class="dark:bg-gray-700">TS-06-06</option>
+                    
+                    <option value="TS-06-07" class="dark:bg-gray-700">TS-06-07</option>
+                    
+                    <option value="TS-06-08" class="dark:bg-gray-700">TS-06-08</option>
+                    
+                    <option value="TS-06-09" class="dark:bg-gray-700">TS-06-09</option>
+                    
+                    <option value="TS-06-10" class="dark:bg-gray-700">TS-06-10</option>
+                    
+                    <option value="TS-07-01" class="dark:bg-gray-700">TS-07-01</option>
+                    
+                    <option value="TS-07-02" class="dark:bg-gray-700">TS-07-02</option>
+                    
+                    <option value="TS-07-03" class="dark:bg-gray-700">TS-07-03</option>
+                    
+                    <option value="TS-07-04" class="dark:bg-gray-700">TS-07-04</option>
+                    
+                    <option value="TS-07-05" class="dark:bg-gray-700">TS-07-05</option>
+                    
+                    <option value="TS-07-06" class="dark:bg-gray-700">TS-07-06</option>
+                    
+                    <option value="TS-07-07" class="dark:bg-gray-700">TS-07-07</option>
+                    
+                    <option value="TS-07-08" class="dark:bg-gray-700">TS-07-08</option>
+                    
+                    <option value="TS-07-09" class="dark:bg-gray-700">TS-07-09</option>
+                    
+                    <option value="TS-07-10" class="dark:bg-gray-700">TS-07-10</option>
+                    
+                    <option value="TS-07-11" class="dark:bg-gray-700">TS-07-11</option>
+                    
+                    <option value="TS-07-12" class="dark:bg-gray-700">TS-07-12</option>
+                    
+                    <option value="TS-07-13" class="dark:bg-gray-700">TS-07-13</option>
+                    
+                    <option value="TS-07-14" class="dark:bg-gray-700">TS-07-14</option>
+                    
+                    <option value="TS-08-01" class="dark:bg-gray-700">TS-08-01</option>
+                    
+                    <option value="TS-08-02" class="dark:bg-gray-700">TS-08-02</option>
+                    
+                    <option value="TS-08-03" class="dark:bg-gray-700">TS-08-03</option>
+                    
+                    <option value="TS-08-04" class="dark:bg-gray-700">TS-08-04</option>
+                    
+                    <option value="TS-08-05" class="dark:bg-gray-700">TS-08-05</option>
+                    
+                    <option value="TS-08-06" class="dark:bg-gray-700">TS-08-06</option>
+                    
+                    <option value="TS-08-07" class="dark:bg-gray-700">TS-08-07</option>
+                    
+                    <option value="TS-08-08" class="dark:bg-gray-700">TS-08-08</option>
+                    
+                    <option value="TS-08-09" class="dark:bg-gray-700">TS-08-09</option>
+                    
+                    <option value="TS-08-10" class="dark:bg-gray-700">TS-08-10</option>
+                    
+                    <option value="TS-08-11" class="dark:bg-gray-700">TS-08-11</option>
+                    
+                    <option value="TS-08-12" class="dark:bg-gray-700">TS-08-12</option>
+                    
+                    <option value="TS-08-13" class="dark:bg-gray-700">TS-08-13</option>
+                    
+                    <option value="TS-08-14" class="dark:bg-gray-700">TS-08-14</option>
+                    
+                    <option value="TS-08-15" class="dark:bg-gray-700">TS-08-15</option>
+                    
+                    <option value="TS-09-01" class="dark:bg-gray-700">TS-09-01</option>
+                    
+                    <option value="TS-09-02" class="dark:bg-gray-700">TS-09-02</option>
+                    
+                    <option value="TS-09-03" class="dark:bg-gray-700">TS-09-03</option>
+                    
+                    <option value="TS-09-04" class="dark:bg-gray-700">TS-09-04</option>
+                    
+                    <option value="TS-09-05" class="dark:bg-gray-700">TS-09-05</option>
+                    
+                    <option value="TS-09-06" class="dark:bg-gray-700">TS-09-06</option>
+                    
+                    <option value="TS-09-07A" class="dark:bg-gray-700">TS-09-07A</option>
+                    
+                    <option value="TS-09-07B" class="dark:bg-gray-700">TS-09-07B</option>
+                    
+                    <option value="TS-09-08" class="dark:bg-gray-700">TS-09-08</option>
+                    
+                    <option value="TS-09-09" class="dark:bg-gray-700">TS-09-09</option>
+                    
+                    <option value="TS-09-10" class="dark:bg-gray-700">TS-09-10</option>
+                    
+                    <option value="TS-09-11" class="dark:bg-gray-700">TS-09-11</option>
+                    
+                    <option value="TS-10-01" class="dark:bg-gray-700">TS-10-01</option>
+                    
+                    <option value="TS-10-02" class="dark:bg-gray-700">TS-10-02</option>
+                    
+                    <option value="TS-10-03" class="dark:bg-gray-700">TS-10-03</option>
+                    
+                    <option value="TS-10-04" class="dark:bg-gray-700">TS-10-04</option>
+                    
+                    <option value="TS-10-05" class="dark:bg-gray-700">TS-10-05</option>
+                    
+                    <option value="TS-10-06" class="dark:bg-gray-700">TS-10-06</option>
+                    
+                    <option value="TS-10-07" class="dark:bg-gray-700">TS-10-07</option>
+                    
+                    <option value="TS-10-08" class="dark:bg-gray-700">TS-10-08</option>
+                    
+                    <option value="TS-10-09" class="dark:bg-gray-700">TS-10-09</option>
+                    
+                    <option value="TS-10-10" class="dark:bg-gray-700">TS-10-10</option>
+                    
+                    <option value="TS-10-11" class="dark:bg-gray-700">TS-10-11</option>
+                    
+                    <option value="TS-10-12" class="dark:bg-gray-700">TS-10-12</option>
+                    
+                    <option value="TS-11-01" class="dark:bg-gray-700">TS-11-01</option>
+                    
+                    <option value="TS-11-02" class="dark:bg-gray-700">TS-11-02</option>
+                    
+                    <option value="TS-11-03" class="dark:bg-gray-700">TS-11-03</option>
+                    
+                    <option value="TS-11-04" class="dark:bg-gray-700">TS-11-04</option>
+                    
+                    <option value="TS-11-05" class="dark:bg-gray-700">TS-11-05</option>
+                    
+                    <option value="TS-11-06" class="dark:bg-gray-700">TS-11-06</option>
+                    
+                    <option value="TS-11-07" class="dark:bg-gray-700">TS-11-07</option>
+                    
+                    <option value="TS-11-08" class="dark:bg-gray-700">TS-11-08</option>
+                    
+                    <option value="TS-11-09" class="dark:bg-gray-700">TS-11-09</option>
+                    
+                    <option value="TS-11-10" class="dark:bg-gray-700">TS-11-10</option>
+                    
+                    <option value="TS-11-11" class="dark:bg-gray-700">TS-11-11</option>
+                    
+                    <option value="TS-11-12" class="dark:bg-gray-700">TS-11-12</option>
+                    
+                    <option value="TS-11-13" class="dark:bg-gray-700">TS-11-13</option>
+                    
+                    <option value="TS-11-14" class="dark:bg-gray-700">TS-11-14</option>
+                    
+                    <option value="TS-12-01" class="dark:bg-gray-700">TS-12-01</option>
+                    
+                    <option value="TS-12-02" class="dark:bg-gray-700">TS-12-02</option>
+                    
+                    <option value="TS-12-03" class="dark:bg-gray-700">TS-12-03</option>
+                    
+                    <option value="TS-12-04" class="dark:bg-gray-700">TS-12-04</option>
+                    
+                    <option value="TS-12-05" class="dark:bg-gray-700">TS-12-05</option>
+                    
+                    <option value="TS-12-06" class="dark:bg-gray-700">TS-12-06</option>
+                    
+                    <option value="TS-12-07" class="dark:bg-gray-700">TS-12-07</option>
+                    
+                    <option value="TS-12-08" class="dark:bg-gray-700">TS-12-08</option>
+                    
+                    <option value="TS-12-09" class="dark:bg-gray-700">TS-12-09</option>
+                    
+                    <option value="TS-12-10" class="dark:bg-gray-700">TS-12-10</option>
+                    
+                    <option value="TS-12-11" class="dark:bg-gray-700">TS-12-11</option>
+                    
+                    <option value="TS-13-01" class="dark:bg-gray-700">TS-13-01</option>
+                    
+                    <option value="TS-13-02" class="dark:bg-gray-700">TS-13-02</option>
+                    
+                    <option value="TS-13-03" class="dark:bg-gray-700">TS-13-03</option>
+                    
+                    <option value="TS-13-04" class="dark:bg-gray-700">TS-13-04</option>
+                    
+                    <option value="TS-13-05" class="dark:bg-gray-700">TS-13-05</option>
+                    
+                    <option value="TS-13-06" class="dark:bg-gray-700">TS-13-06</option>
+                    
+                    <option value="TS-13-07" class="dark:bg-gray-700">TS-13-07</option>
+                    
+                    <option value="TS-13-08" class="dark:bg-gray-700">TS-13-08</option>
+                    
+                    <option value="TS-13-09" class="dark:bg-gray-700">TS-13-09</option>
+                    
+                    <option value="TS-13-10" class="dark:bg-gray-700">TS-13-10</option>
+                    
+                    <option value="TS-13-11" class="dark:bg-gray-700">TS-13-11</option>
+                    
+                    <option value="TS-13-12" class="dark:bg-gray-700">TS-13-12</option>
+                    
+                    <option value="TS-14-01" class="dark:bg-gray-700">TS-14-01</option>
+                    
+                    <option value="TS-14-02" class="dark:bg-gray-700">TS-14-02</option>
+                    
+                    <option value="TS-14-03" class="dark:bg-gray-700">TS-14-03</option>
+                    
+                    <option value="TS-14-04" class="dark:bg-gray-700">TS-14-04</option>
+                    
+                    <option value="TS-14-05" class="dark:bg-gray-700">TS-14-05</option>
+                    
+                    <option value="TS-14-06" class="dark:bg-gray-700">TS-14-06</option>
+                    
+                    <option value="TS-14-07" class="dark:bg-gray-700">TS-14-07</option>
+                    
+                    <option value="TS-14-08" class="dark:bg-gray-700">TS-14-08</option>
+                    
+                    <option value="TS-14-09" class="dark:bg-gray-700">TS-14-09</option>
+                    
+                    <option value="TS-14-10" class="dark:bg-gray-700">TS-14-10</option>
+                    
+                    <option value="TS-14-11" class="dark:bg-gray-700">TS-14-11</option>
+                    
+                    <option value="TS-14-12" class="dark:bg-gray-700">TS-14-12</option>
+                    
+                    <option value="TS-16-01" class="dark:bg-gray-700">TS-16-01</option>
+                    
+                    <option value="TS-16-02" class="dark:bg-gray-700">TS-16-02</option>
+                    
+                    <option value="TS-16-03" class="dark:bg-gray-700">TS-16-03</option>
+                    
+                    <option value="TS-16-04" class="dark:bg-gray-700">TS-16-04</option>
+                    
+                    <option value="TS-16-05" class="dark:bg-gray-700">TS-16-05</option>
+                    
+                    <option value="TS-16-06" class="dark:bg-gray-700">TS-16-06</option>
+                    
+                    <option value="TS-16-07" class="dark:bg-gray-700">TS-16-07</option>
+                    
+                    <option value="TS-16-08" class="dark:bg-gray-700">TS-16-08</option>
+                    
+                    <option value="TS-16-09" class="dark:bg-gray-700">TS-16-09</option>
+                    
+                    <option value="TS-16-10" class="dark:bg-gray-700">TS-16-10</option>
+                    
+                    <option value="TS-21-01" class="dark:bg-gray-700">TS-21-01</option>
+                    
+                    <option value="TS-21-02" class="dark:bg-gray-700">TS-21-02</option>
+                    
+                    <option value="TS-21-03" class="dark:bg-gray-700">TS-21-03</option>
+                    
+                    <option value="TS-21-04" class="dark:bg-gray-700">TS-21-04</option>
+                    
+                    <option value="TS-21-05" class="dark:bg-gray-700">TS-21-05</option>
+                    
+                    <option value="TS-21-06" class="dark:bg-gray-700">TS-21-06</option>
+                    
+                    <option value="TS-21-07" class="dark:bg-gray-700">TS-21-07</option>
+                    
+                    <option value="TS-21-08" class="dark:bg-gray-700">TS-21-08</option>
+                    
+                    <option value="TS-21-09" class="dark:bg-gray-700">TS-21-09</option>
+                    
+                    <option value="TS-21-10" class="dark:bg-gray-700">TS-21-10</option>
+                    
+                    <option value="TS-21-11" class="dark:bg-gray-700">TS-21-11</option>
+                    
+                    <option value="TS-26-01" class="dark:bg-gray-700">TS-26-01</option>
+                    
+                    <option value="TS-26-02" class="dark:bg-gray-700">TS-26-02</option>
+                    
+                    <option value="TS-26-03" class="dark:bg-gray-700">TS-26-03</option>
+                    
+                    <option value="TS-26-04" class="dark:bg-gray-700">TS-26-04</option>
+                    
+                    <option value="TS-26-05" class="dark:bg-gray-700">TS-26-05</option>
+                    
+                    <option value="TS-26-06" class="dark:bg-gray-700">TS-26-06</option>
+                    
+                    <option value="TS-26-07" class="dark:bg-gray-700">TS-26-07</option>
+                    
+                    <option value="TS-26-08" class="dark:bg-gray-700">TS-26-08</option>
+                    
+                    <option value="TS-26-09" class="dark:bg-gray-700">TS-26-09</option>
+                    
+                    <option value="TS-26-10" class="dark:bg-gray-700">TS-26-10</option>
+                    
+                    <option value="TS-28-01" class="dark:bg-gray-700">TS-28-01</option>
+                    
+                    <option value="TS-28-02" class="dark:bg-gray-700">TS-28-02</option>
+                    
+                    <option value="TS-28-03" class="dark:bg-gray-700">TS-28-03</option>
+                    
+                    <option value="TS-28-04" class="dark:bg-gray-700">TS-28-04</option>
+                    
+                    <option value="TS-28-05" class="dark:bg-gray-700">TS-28-05</option>
+                    
+                    <option value="TS-28-06" class="dark:bg-gray-700">TS-28-06</option>
+                    
+                    <option value="TS-28-07" class="dark:bg-gray-700">TS-28-07</option>
+                    
+                    <option value="TS-28-08" class="dark:bg-gray-700">TS-28-08</option>
+                    
+                    <option value="TS-28-09" class="dark:bg-gray-700">TS-28-09</option>
+                    
+                    <option value="TS-28-10" class="dark:bg-gray-700">TS-28-10</option>
+                    
+                    <option value="VD0001" class="dark:bg-gray-700">VD0001</option>
+                    
+                    <option value="VD0002" class="dark:bg-gray-700">VD0002</option>
+                    
+                    <option value="VD0003" class="dark:bg-gray-700">VD0003</option>
+                    
+                </select>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Thông tin bệnh nhân</h2>
+            </div>
+
+            <form id="disease-form" class="p-6 space-y-6">
+                <div>
+                    <label for="id" class="block text-sm font-medium text-gray-700 dark:text-white">Mã bệnh án (ID)</label>
+                    <input type="text" id="id" name="id"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2"
+                        placeholder="Nhập mã...">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="sex" class="block text-sm font-medium text-gray-700 dark:text-white">Giới tính</label>
+                        <select name="sex" id="sex"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                            <option value="n" class="dark:bg-gray-700">Không xác định</option>
+                            <option value="m" class="dark:bg-gray-700">Nam</option>
+                            <option value="f" class="dark:bg-gray-700">Nữ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="age" class="block text-sm font-medium text-gray-700 dark:text-white">Tuổi</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="age" name="age" min="1" max="5000"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                            <select name="age-unit" id="age-unit"
+                                class="mt-1 block w-20 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2 bg-gray-50 dark:bg-gray-700">
+                                <option value="y">Năm</option>
+                                <option value="d">Ngày</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="disc" class="block text-sm font-medium text-gray-700 dark:text-white">Kết quả điều trị / Trạng thái ra viện</label>
+                        <select name="disc" id="disc"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                            <option value="1" class="dark:bg-gray-700">Ra viện</option>
+                            <option value="2" class="dark:bg-gray-700">Xin ra viện</option>
+                            <option value="3" class="dark:bg-gray-700">Trốn viện</option>
+                            <option value="4" class="dark:bg-gray-700">Chuyển viện</option>
+                            <option value="5" class="dark:bg-gray-700">Khác</option>
+                            <option value="8" class="dark:bg-gray-700">Tử vong (Có khám nghiệm)</option>
+                            <option value="9" class="dark:bg-gray-700">Tử vong (Không khám nghiệm)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="admwt" class="block text-sm font-medium text-gray-700 dark:text-white">Cân nặng (kg)</label>
+                        <input type="number" step="0.1" id="admwt" name="admwt"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="losd" class="block text-sm font-medium text-gray-700 dark:text-white">Ngày điều trị</label>
+                        <input type="number" id="losd" name="losd"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                    </div>
+                    <div>
+                        <label for="loshr" class="block text-sm font-medium text-gray-700 dark:text-white">Giờ (nếu < 24h)</label>
+                        <input type="number" id="loshr" name="loshr"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border px-3 py-2">
+                    </div>
+                </div>
+
+                <hr class="border-gray-200">
+
+                <div>
+                    <label for="pdx" class="block text-sm font-medium text-gray-700 dark:text-white">Chẩn đoán chính (Mã ICD)</label>
+                    <input type="text" id="pdx" name="pdx"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-lg font-mono border px-3 py-2"
+                        placeholder="e.g.: A00.1">
+                </div>
+
+                <div>
+                    <label for="sdxs" class="block text-sm font-medium text-gray-700 dark:text-white">Chẩn đoán kèm theo (Cách nhau bởi dấu cách)</label>
+                    <textarea name="sdxs" id="sdxs" rows="3"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-lg font-mono border px-3 py-2"></textarea>
+                </div>
+
+                <div>
+                    <label for="procs" class="block text-sm font-medium text-gray-700 dark:text-white">Mã phẫu thuật/thủ thuật (Cách nhau bởi dấu cách)</label>
+                    <textarea name="procs" id="procs" rows="3"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-lg font-mono border px-3 py-2"></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button id="buttonClear" type="button"
+                        class="flex-1 bg-gray-100 hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 border border-gray-300 rounded shadow transition">
+                        Nhập mới
+                    </button>
+                    <button id="buttonSave" type="button"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow transition">
+                        Lưu
+                    </button>
+                    <button id="buttonRun" type="button"
+                        class="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow transition">
+                        CHẠY DRG
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="lg:col-span-7 space-y-8">
+
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white border-b border-gray-200 pb-3 mb-4">
+                1. Thông tin tổng hợp
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <div class="grid grid-cols-[140px_1fr] gap-2 items-center border-b border-gray-100 pb-2">
+                    <span class="text-gray-500 font-medium dark:text-white">Giới tính:</span>
+                    <span id="desc-sex" class="font-semibold text-gray-900 dark:text-white">-</span>
+                </div>
+                <div class="grid grid-cols-[140px_1fr] gap-2 items-center border-b border-gray-100 pb-2">
+                    <span class="text-gray-500 font-medium dark:text-white">Tuổi:</span>
+                    <span id="desc-age" class="font-semibold text-gray-900 dark:text-white">-</span>
+                </div>
+                <div class="grid grid-cols-[140px_1fr] gap-2 items-center border-b border-gray-100 pb-2">
+                    <span class="text-gray-500 font-medium dark:text-white">Cân nặng:</span>
+                    <span id="desc-admwt" class="font-semibold text-gray-900 dark:text-white">-</span>
+                </div>
+                <div class="grid grid-cols-[140px_1fr] gap-2 items-center border-b border-gray-100 pb-2">
+                    <span class="text-gray-500 font-medium dark:text-white">Kết quả điều trị / Trạng thái ra viện:</span>
+                    <span id="desc-disc" class="font-semibold text-gray-900 dark:text-white">-</span>
+                </div>
+                <div class="grid grid-cols-[140px_1fr] gap-2 items-center border-b border-gray-100 pb-2">
+                    <span class="text-gray-500 font-medium dark:text-white">Thời gian nằm viện:</span>
+                    <span id="desc-los" class="font-semibold text-gray-900 dark:text-white">-</span>
+                </div>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2 dark:text-white">Chẩn đoán:</h4>
+                    <div id="desc-dx"
+                        class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-sm text-gray-800 dark:text-white border border-gray-100 min-h-[40px]">
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2 dark:text-white">Thủ thuật:</h4>
+                    <div id="desc-proc"
+                        class="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 text-sm text-gray-800 dark:text-white border border-gray-100 min-h-[40px]">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 class="text-lg font-bold text-gray-900 border-b border-gray-200 pb-3 mb-4 dark:text-white">
+                2. Diễn giải Logic
+            </h3>
+            <div id="explain" class="overflow-x-auto">
+                <p class="text-gray-400 italic text-sm dark:text-white">Kết quả diễn giải từng bước sẽ hiển thị ở đây...</p>
+            </div>
+        </div>
+
+        <div class="bg-gray-100 dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 p-6 ring-2 ring-blue-100">
+            <h3
+                class="text-lg font-bold text-blue-800 dark:text-blue-200 border-b border-blue-100 pb-3 mb-4 flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                3. Kết quả Phân nhóm
+            </h3>
+            <div id="result" class="overflow-x-auto">
+                <p class="text-gray-400 italic text-sm dark:text-white">Kết quả phân nhóm cuối cùng sẽ hiển thị ở đây...</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+    </main>
+
+    <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500 dark:text-white">
+            <p>Phần mềm sử dụng thuật toán ghép nhóm của NHSO Thái Lan, phiên bản ThaiDRG Version 5.2</p>
+            <p class="mt-2 text-xs text-gray-400 dark:text-white">© 2026 White Neuron. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+
+                    
+                </div>
+            </div>
+
+            
+
+        </div>
+    </div>
+
+
+
+        <div id="modal-overlay" class="backdrop-blur-xs bg-base-900/80 bottom-0 fixed hidden left-0 mr-1 right-0 top-0 z-60"></div>
+
+        
+
+
+    <div class="backdrop-blur-xs bg-base-900/80 flex flex-col fixed inset-0 p-4 lg:p-32 z-[1000]"
+         x-data="searchCommand()"
+         x-on:opencommand.window="handleOpen()"
+         x-on:keydown.window="handleShortcut($event)"
+         x-show="openCommandResults">
+        <div class="bg-white flex flex-col max-w-3xl min-h-0 mx-auto overflow-hidden rounded-default shadow-lg w-full dark:bg-base-800" x-on:click.outside="handleOutsideClick()">
+            <div class="flex flex-row items-center px-4 w-full">
+                <button type="submit" id="command-submit" class="group flex items-center focus:outline-hidden">
+                    <span class="block material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:hidden">
+                        search
+                    </span>
+
+                    <span class="hidden material-symbols-outlined text-xl text-base-400 dark:text-base-500 group-[.htmx-request]:block animate-spin">
+                        progress_activity
+                    </span>
+                </button>
+
+                <input
+                    autocomplete="off"
+                    type="search"
+                    placeholder="Gõ để tìm kiếm"
+                    class="font-medium grow px-2 py-4 placeholder-font-subtle-light text-font-default-light focus:outline-hidden dark:placeholder-font-subtle-dark dark:text-font-default-dark"
+                    name="s"
+                    id="search-input-command"
+                    x-ref="searchInputCommand"
+                    hx-indicator="#command-submit"
+                    x-on:keydown.escape.prevent="handleEscape()"
+                    x-on:keydown.arrow-down.prevent="nextItem()"
+                    x-on:keydown.arrow-up.prevent="prevItem()"
+                    x-on:keydown.enter.prevent="selectItem(true)"
+                    hx-get="/search/?extended=1"
+                    hx-trigger="keyup changed delay:500ms"
+                    hx-select="#command-results-list"
+                    hx-select-oob="#command-results-note"
+                    hx-target="#command-results">
+
+                <kbd class="bg-base-50 border border-base-200 font-sans text-xs text-font-subtle-light rounded-xs px-1 whitespace-nowrap dark:bg-white/[.04] dark:border-base-700 dark:text-font-subtle-dark">
+    esc
+</kbd>
+
+            </div>
+
+            <div class="grow h-full overflow-auto w-full dark:border-base-700" data-simplebar x-on:htmx:after-swap="handleContentLoaded($event)" x-bind:class="{'border-t border-base-200': items !== undefined && items.length > 0}">
+                <div id="command-results"></div>
+
+                
+                    
+
+<div id="command-history" x-show="!hasResults">
+    <template x-if="commandHistory.length > 0">
+        <div class="">
+            <h3 class="border-b border-base-200 font-semibold text-font-important-light dark:text-font-important-dark dark:border-base-700 p-4">
+                Recent searches
+            </h3>
+
+            <ul>
+                <template x-for="(item, index) in commandHistory">
+                    <li class="border-b border-base-200 dark:border-base-700 last:border-b-0"
+                        x-bind:class="{'active': currentIndex === index + 1}"
+                        x-on:mouseenter="currentIndex = index + 1">
+                        <a class="block flex flex-row gap-4 items-center p-4 transition-colors"
+                           x-bind:data-title="item.title"
+                           x-bind:data-description="item.description"
+                           x-bind:href="item.link"
+                           x-bind:class="{'bg-base-50 dark:bg-white/[.04]': currentIndex === index + 1}">
+                            <span class="truncate">
+                                <span class="font-medium text-font-important-light dark:text-font-important-dark" x-text="item.title"></span>
+                                <span class="mx-1 opacity-50 group-[.active]:text-white">•</span>
+                                <span class="text-font-subtle-light dark:text-font-subtle-dark group-[.active]:text-white" x-text="item.description"></span>
+                            </span>
+
+                            <span class="flex flex-row items-center ml-auto">
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-primary-600 dark:hover:text-primary-500"
+                                      x-on:click="toggleFavorite($event, index);"
+                                      x-bind:class="{'text-primary-600 dark:text-primary-500': item.favorite}">
+                                    favorite
+                                </span>
+
+                                <span class="bg-base-200 h-6 w-px mx-3"></span>
+
+                                <span class="material-symbols-outlined text-base-400 dark:text-base-500 hover:text-base-500 dark:hover:text-base-400" x-on:click="removeFromHistory($event, index);">
+                                    close
+                                </span>
+                            </span>
+                        </a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+    </template>
+
+    <template x-if="commandHistory.length === 0">
+        <div class="border-t border-base-200 px-4 py-8 dark:border-base-700">
+            <p class="text-lg text-center">
+                No recent searches
+            </p>
+        </div>
+    </template>
+</div>
+</div>
+
+                
+
+                <div id="command-results-note"></div>
+            </div>
+        </div>
+    </div>
+
+
+
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="/static/unfold/js/simplebar/simplebar.js"></script>
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v67327c56f0bb4ef8b305cae61679db8f1769101564043" integrity="sha512-rdcWY47ByXd76cbCFzznIcEaCN71jqkWBBqlwhF1SY7KubdLKZiEGeP7AyieKZlGP9hbY/MhGrwXzJC/HulNyg==" data-cf-beacon='{"version":"2024.11.0","token":"ea11a134e56d43daad6c73784d6e2c31","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
